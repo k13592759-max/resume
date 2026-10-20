@@ -1,0 +1,64 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1167 >>
+stream
+BT
+/F1 18 Tf
+50 720 Td
+(Krishna Katekhaye) Tj
+/F1 11 Tf
+0 -22 Td
+(Aspiring AI Developer & Generative AI Engineer | BCA 1st Year) Tj
+/F1 10 Tf
+0 -18 Td
+(Location: India | GitHub: https://github.com/krishnakatekhaye10) Tj
+0 -26 Td
+(Education: Bachelor of Computer Applications (BCA), 1st Year) Tj
+0 -22 Td
+(Focus: Generative AI, Prompt Engineering, Modern Web Development) Tj
+0 -26 Td
+(Technical Focus & Skills:) Tj
+0 -16 Td
+(- AI & Development: Generative AI Exploration, Prompt Engineering, AI-assisted development) Tj
+0 -16 Td
+(- Web Development: HTML, CSS, JavaScript) Tj
+0 -16 Td
+(- Tools & Environments: Git, GitHub, VS Code, Google Antigravity) Tj
+0 -16 Td
+(- Programming Fundamentals: C, Python (developing)) Tj
+0 -26 Td
+(Candidate Projects & Concepts:) Tj
+0 -16 Td
+(- EcoMind: Eco-focused digital project exploring AI and mapping technologies) Tj
+0 -16 Td
+(- VotePath India: Civic information project) Tj
+0 -16 Td
+(- StadiumGPT360: Sports-focused AI project concept) Tj
+0 -16 Td
+(- CoffeeMind & Climatora: Sustainability and utility digital concepts) Tj
+0 -36 Td
+([Note: Replace this placeholder by putting your official resume PDF at public/resume.pdf]) Tj
+ET
+endstream
+endobj
+xref
+0 5
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000266 00000 n 
+trailer
+<< /Size 5 /Root 1 0 R >>
+startxref
+1497
+%%EOF
