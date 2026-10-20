@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
+import { SpotlightCard } from './SpotlightCard';
 import { GithubIcon, LinkedinIcon } from './SocialIcons';
+import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { 
   Mail, 
@@ -25,21 +27,23 @@ export const Contact: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(personal.email);
-    setCopied(true);
-    
+  const triggerConfetti = () => {
     try {
       confetti({
-        particleCount: 35,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: ['#38BDF8', '#818CF8', '#C084FC']
+        particleCount: 60,
+        spread: 80,
+        origin: { y: 0.75 },
+        colors: ['#38BDF8', '#818CF8', '#C084FC', '#34D399']
       });
     } catch {
       // safe fallback
     }
+  };
 
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(personal.email);
+    setCopied(true);
+    triggerConfetti();
     setTimeout(() => setCopied(false), 2500);
   };
 
@@ -52,7 +56,9 @@ export const Contact: React.FC = () => {
       return;
     }
 
-    const subjectLine = encodeURIComponent(formData.subject ? `[Portfolio] ${formData.subject}` : `[Portfolio Inquiry] from ${formData.name}`);
+    const subjectLine = encodeURIComponent(
+      formData.subject ? `[Portfolio] ${formData.subject}` : `[Portfolio Inquiry] from ${formData.name}`
+    );
     const bodyContent = encodeURIComponent(
       `Hi Krishna,\n\nMy name is ${formData.name} (${formData.email}).\n\n${formData.message}\n\n---\nSent via Portfolio Contact Form`
     );
@@ -61,16 +67,7 @@ export const Contact: React.FC = () => {
       `To: ${personal.email}\nSubject: ${formData.subject || 'Portfolio Inquiry'}\nFrom: ${formData.name} (${formData.email})\n\n${formData.message}`
     );
 
-    try {
-      confetti({
-        particleCount: 50,
-        spread: 70,
-        origin: { y: 0.7 },
-        colors: ['#38BDF8', '#818CF8', '#10B981']
-      });
-    } catch {
-      // fallback
-    }
+    triggerConfetti();
 
     window.location.href = `mailto:${personal.email}?subject=${subjectLine}&body=${bodyContent}`;
 
@@ -89,7 +86,13 @@ export const Contact: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col items-start mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-start mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-mono mb-3">
             <MessageSquare className="w-3.5 h-3.5" />
             <span>06 // REACH OUT</span>
@@ -100,7 +103,7 @@ export const Contact: React.FC = () => {
           <p className="mt-3 text-slate-600 dark:text-slate-400 max-w-2xl text-base">
             Whether you want to discuss an internship opportunity, brainstorm an AI experiment, or simply say hello, my inbox is always open.
           </p>
-        </div>
+        </motion.div>
 
         {/* Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -109,53 +112,67 @@ export const Contact: React.FC = () => {
           <div className="lg:col-span-5 flex flex-col gap-5">
             
             {/* Email Card with Copy & Open */}
-            <div className="glass-panel rounded-3xl p-6 sm:p-7 relative overflow-hidden">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 dark:text-sky-400">
-                  <Mail className="w-6 h-6" />
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <SpotlightCard className="glass-panel rounded-3xl p-6 sm:p-7 relative overflow-hidden">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 dark:text-sky-400">
+                    <Mail className="w-6 h-6" />
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleCopyEmail}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-all"
+                    title="Copy email to clipboard"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                        <span className="text-emerald-600 dark:text-emerald-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy Address</span>
+                      </>
+                    )}
+                  </motion.button>
                 </div>
-                <button
-                  onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-all"
-                  title="Copy email to clipboard"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-500" />
-                      <span className="text-emerald-600 dark:text-emerald-400">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Copy Address</span>
-                    </>
-                  )}
-                </button>
-              </div>
 
-              <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-1">
-                Direct Email
-              </span>
-              <a
-                href={`mailto:${personal.email}`}
-                className="text-base sm:text-lg font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-sky-400 transition-colors break-all"
-              >
-                {personal.email}
-              </a>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                Usually responds within 24 hours. Replace this address in <code className="text-[11px] bg-slate-100 dark:bg-white/5 px-1 py-0.5 rounded">portfolioData.ts</code>.
-              </p>
-            </div>
+                <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-1">
+                  Direct Email
+                </span>
+                <a
+                  href={`mailto:${personal.email}`}
+                  className="text-base sm:text-lg font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-sky-400 transition-colors break-all"
+                >
+                  {personal.email}
+                </a>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Usually responds within 24 hours. Replace this address in <code className="text-[11px] bg-slate-100 dark:bg-white/5 px-1 py-0.5 rounded">portfolioData.ts</code>.
+                </p>
+              </SpotlightCard>
+            </motion.div>
 
             {/* GitHub Card */}
-            <a
+            <motion.a
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -3 }}
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
               className="glass-panel rounded-3xl p-6 flex items-center justify-between hover:border-indigo-500/30 group transition-all"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-800 dark:text-white group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-800 dark:text-white group-hover:scale-105 group-hover:rotate-6 transition-transform">
                   <GithubIcon className="w-6 h-6" />
                 </div>
                 <div>
@@ -168,17 +185,22 @@ export const Contact: React.FC = () => {
                 </div>
               </div>
               <ArrowUpRight className="w-5 h-5 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
+            </motion.a>
 
             {/* LinkedIn Card Placeholder */}
-            <a
+            <motion.a
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -3 }}
               href={personal.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="glass-panel rounded-3xl p-6 flex items-center justify-between hover:border-indigo-500/30 group transition-all border-dashed"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-500 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-500 group-hover:scale-105 group-hover:-rotate-6 transition-transform">
                   <LinkedinIcon className="w-6 h-6" />
                 </div>
                 <div>
@@ -196,7 +218,7 @@ export const Contact: React.FC = () => {
                 </div>
               </div>
               <ArrowUpRight className="w-5 h-5 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
+            </motion.a>
 
             {/* Availability Note */}
             <div className="p-4 rounded-2xl bg-slate-100 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 text-xs text-slate-500 dark:text-slate-400">
@@ -207,8 +229,14 @@ export const Contact: React.FC = () => {
           </div>
 
           {/* Right Column: Interactive Contact Form */}
-          <div className="lg:col-span-7">
-            <div className="glass-panel rounded-3xl p-6 sm:p-9 relative">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7"
+          >
+            <SpotlightCard className="glass-panel rounded-3xl p-6 sm:p-9 relative">
               
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                 Send a Direct Message
@@ -281,27 +309,37 @@ export const Contact: React.FC = () => {
 
                 {/* Feedback message banner */}
                 {status === 'success' && (
-                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-start gap-2.5">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-start gap-2.5"
+                  >
                     <Sparkles className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>{statusMessage}</span>
-                  </div>
+                  </motion.div>
                 )}
 
                 {status === 'error' && (
-                  <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-start gap-2.5">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-start gap-2.5"
+                  >
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>{statusMessage}</span>
-                  </div>
+                  </motion.div>
                 )}
 
-                {/* Submit Button */}
-                <button
+                {/* Submit Button with spring physics */}
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-semibold text-sm text-white bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:via-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-200 active:scale-95"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-semibold text-sm text-white bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:via-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-shadow active:scale-95"
                 >
                   <Send className="w-4 h-4" />
                   <span>Send Message via Mail Client</span>
-                </button>
+                </motion.button>
 
                 {/* Footnote */}
                 <p className="text-[11px] text-center text-slate-400 dark:text-slate-500 font-mono mt-3">
@@ -310,8 +348,8 @@ export const Contact: React.FC = () => {
 
               </form>
 
-            </div>
-          </div>
+            </SpotlightCard>
+          </motion.div>
 
         </div>
 
