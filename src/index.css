@@ -114,3 +114,35 @@ html:not(.dark) .text-gradient-subtle {
     scroll-behavior: auto !important;
   }
 }
+
+/* Dedicated Clean Print / Save to PDF Rules */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  header,
+  footer,
+  .print-hide,
+  .fixed,
+  button,
+  canvas {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: #000000 !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

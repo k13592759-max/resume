@@ -7,14 +7,16 @@ import {
   Menu, 
   X, 
   Sparkles, 
-  ArrowUpRight 
+  ArrowUpRight, 
+  FileText 
 } from 'lucide-react';
 
 interface NavbarProps {
   activeSection: string;
+  onOpenResume?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeSection, onOpenResume }) => {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
           ? 'glass-nav py-3 shadow-lg shadow-black/5 dark:shadow-black/20'
           : 'bg-transparent py-5'
@@ -62,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
           >
             {/* Futuristic Monogram */}
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-400 via-indigo-600 to-purple-600 p-[1.5px] transition-transform duration-300 group-hover:scale-105">
-              <div className="w-full h-full bg-[#0A0C14] dark:bg-[#0A0C14] rounded-[10px] flex items-center justify-center">
+              <div className="w-full h-full bg-[#0A0C14] rounded-[10px] flex items-center justify-center">
                 <span className="font-mono font-bold text-white text-base tracking-tighter">
                   K<span className="text-sky-400">K</span>
                 </span>
@@ -101,8 +103,21 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
             })}
           </nav>
 
-          {/* Right Action Tools: Theme Toggle & Connect CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Right Action Tools: Resume Button, Theme Toggle & Connect CTA */}
+          <div className="hidden md:flex items-center gap-2.5">
+            
+            {/* View Interactive Resume Button */}
+            {onOpenResume && (
+              <button
+                onClick={onOpenResume}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-200/60 dark:bg-white/5 hover:bg-slate-300/60 dark:hover:bg-white/10 border border-slate-300/50 dark:border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                title="View ATS Resume & Print Options"
+              >
+                <FileText className="w-3.5 h-3.5 text-indigo-500 dark:text-sky-400" />
+                <span>Resume / CV</span>
+              </button>
+            )}
+
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -126,8 +141,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
             </button>
           </div>
 
-          {/* Mobile Right Controls: Theme Toggle & Hamburger */}
+          {/* Mobile Right Controls: Resume, Theme Toggle & Hamburger */}
           <div className="flex md:hidden items-center gap-2">
+            {onOpenResume && (
+              <button
+                onClick={onOpenResume}
+                aria-label="View Resume"
+                className="p-2 rounded-lg text-slate-700 dark:text-slate-200 bg-slate-200/50 dark:bg-white/5 border border-slate-300/40 dark:border-white/10"
+              >
+                <FileText className="w-4 h-4 text-indigo-500 dark:text-sky-400" />
+              </button>
+            )}
+
             <button
               onClick={toggleTheme}
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
@@ -174,6 +199,19 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
               })}
 
               <div className="pt-3 mt-2 border-t border-slate-200 dark:border-white/10 flex flex-col gap-2">
+                {onOpenResume && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenResume();
+                    }}
+                    className="w-full py-2.5 text-center text-xs font-semibold rounded-xl text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 border border-slate-300 dark:border-white/10 flex items-center justify-center gap-2"
+                  >
+                    <FileText className="w-4 h-4 text-indigo-500" />
+                    <span>View ATS Resume / CV</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => handleNavClick('#contact')}
                   className="w-full py-2.5 text-center text-xs font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 shadow-md shadow-indigo-500/20"

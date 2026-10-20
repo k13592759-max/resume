@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
+import { AgiLab } from './components/AgiLab';
 import { Skills } from './components/Skills';
 import { Projects } from './components/Projects';
 import { Achievements } from './components/Achievements';
@@ -11,10 +12,12 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { NotFound } from './components/NotFound';
 import { FloatingOrbs } from './components/FloatingOrbs';
+import { ResumeModal } from './components/ResumeModal';
 
 export const AppContent: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isNotFound, setIsNotFound] = useState(false);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   // Monitor scroll to update active section in navbar
   useEffect(() => {
@@ -27,7 +30,7 @@ export const AppContent: React.FC = () => {
       }
     }
 
-    const sections = ['home', 'about', 'skills', 'projects', 'achievements', 'contact'];
+    const sections = ['home', 'about', 'agi-lab', 'skills', 'projects', 'achievements', 'contact'];
     
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 200;
@@ -68,13 +71,17 @@ export const AppContent: React.FC = () => {
       {/* Background ambient floating gradient orbs */}
       <FloatingOrbs />
 
-      {/* Top sticky navbar */}
-      <Navbar activeSection={activeSection} />
+      {/* Top sticky navbar with Resume trigger */}
+      <Navbar 
+        activeSection={activeSection} 
+        onOpenResume={() => setIsResumeOpen(true)} 
+      />
 
       {/* Main content sections */}
       <main id="main-content" tabIndex={-1} className="focus:outline-none">
-        <Hero />
+        <Hero onOpenResume={() => setIsResumeOpen(true)} />
         <About />
+        <AgiLab />
         <Skills />
         <Projects />
         <Achievements />
@@ -84,6 +91,12 @@ export const AppContent: React.FC = () => {
 
       {/* Site Footer */}
       <Footer />
+
+      {/* Interactive Printable ATS Resume Modal */}
+      <ResumeModal 
+        isOpen={isResumeOpen} 
+        onClose={() => setIsResumeOpen(false)} 
+      />
 
     </div>
   );

@@ -1,28 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
+import { AgiHologramCore } from './AgiHologramCore';
 import { NeuralNetworkVisual } from './NeuralNetworkVisual';
 import { GithubIcon, LinkedinIcon } from './SocialIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, 
   Mail, 
-  Download, 
+  FileText, 
   Sparkles, 
   Code, 
   Cpu, 
-  Compass, 
-  Zap 
+  Zap, 
+  Box, 
+  Activity 
 } from 'lucide-react';
 
-export const Hero: React.FC = () => {
+interface HeroProps {
+  onOpenResume?: () => void;
+}
+
+export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
   const { personal } = PORTFOLIO_DATA;
   const [activeWordIndex, setActiveWordIndex] = useState(0);
+  const [visualMode, setVisualMode] = useState<'3d-cga' | '2d-synapse'>('3d-cga');
 
   const dynamicWords = [
     'Generative AI',
     'Prompt Engineering',
     'Vibe Coding',
-    'Intelligent Systems',
+    'Agentic Systems',
   ];
 
   useEffect(() => {
@@ -50,7 +57,7 @@ export const Hero: React.FC = () => {
           {/* Left Column: Headline & Story */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             
-            {/* Availability Status Badge with entrance animation */}
+            {/* Availability Status Badge */}
             <motion.div
               initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -80,7 +87,7 @@ export const Hero: React.FC = () => {
               <span className="text-gradient">AI & Code.</span>
             </motion.h1>
 
-            {/* Supporting Text with Animated Rotating Highlight */}
+            {/* Supporting Text with Dynamic Highlight */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -112,7 +119,7 @@ export const Hero: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Action Buttons with spring physics */}
+            {/* Action Buttons: Explore, Connect, and Interactive Resume */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -131,29 +138,30 @@ export const Hero: React.FC = () => {
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
 
-              {/* Button 2: Get In Touch */}
+              {/* Button 2: Interactive Resume / CV */}
+              {onOpenResume && (
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={onOpenResume}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-300 dark:border-white/10 shadow-sm transition-shadow active:scale-95"
+                  title="View formatted ATS Resume"
+                >
+                  <FileText className="w-4 h-4 text-indigo-500 dark:text-sky-400" />
+                  <span>Interactive Resume</span>
+                </motion.button>
+              )}
+
+              {/* Button 3: Get In Touch */}
               <motion.button
                 whileHover={{ scale: 1.04, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => scrollToSection('#contact')}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-300 dark:border-white/10 shadow-sm transition-shadow active:scale-95"
-              >
-                <span>Get In Touch</span>
-                <Mail className="w-4 h-4 text-indigo-500 dark:text-sky-400" />
-              </motion.button>
-
-              {/* Download Resume Button */}
-              <motion.a
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                href={personal.resumePath}
-                download="Krishna_Katekhaye_Resume.pdf"
                 className="inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-medium text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5 border border-transparent hover:border-slate-300 dark:hover:border-white/10 transition-all"
-                title="Download Krishna's resume PDF"
               >
-                <Download className="w-4 h-4 text-slate-500" />
-                <span>Download Resume</span>
-              </motion.a>
+                <Mail className="w-4 h-4" />
+                <span>Get In Touch</span>
+              </motion.button>
 
             </motion.div>
 
@@ -172,7 +180,7 @@ export const Hero: React.FC = () => {
 
               <div className="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
                 <Cpu className="w-4 h-4 text-indigo-500" />
-                <span>GenAI & Prompt Exploration</span>
+                <span>Three.js CGA • GenAI</span>
               </div>
 
               {/* Quick links to verified profiles */}
@@ -203,26 +211,54 @@ export const Hero: React.FC = () => {
 
           </div>
 
-          {/* Right Column: AI / Node Dynamic Visual */}
+          {/* Right Column: 3D CGA AGI Hologram Core & Neural Visual */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
-            className="lg:col-span-5 w-full"
+            className="lg:col-span-5 w-full flex flex-col"
           >
             <div className="relative group">
               <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-sky-500/20 via-indigo-500/20 to-purple-500/20 blur-xl opacity-75 group-hover:opacity-100 transition duration-500" />
-              <NeuralNetworkVisual />
+              
+              {/* Toggle Visualizer Component */}
+              {visualMode === '3d-cga' ? (
+                <AgiHologramCore />
+              ) : (
+                <NeuralNetworkVisual />
+              )}
             </div>
 
+            {/* Visualizer Mode Switcher Bar */}
             <div className="mt-3 px-2 flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setVisualMode('3d-cga')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-all ${
+                    visualMode === '3d-cga'
+                      ? 'bg-indigo-500/10 text-indigo-600 dark:text-sky-400 border-indigo-500/30 font-semibold'
+                      : 'text-slate-400 border-transparent hover:text-white'
+                  }`}
+                >
+                  <Box className="w-3 h-3" />
+                  <span>3D CGA Core</span>
+                </button>
+                <button
+                  onClick={() => setVisualMode('2d-synapse')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-all ${
+                    visualMode === '2d-synapse'
+                      ? 'bg-indigo-500/10 text-indigo-600 dark:text-sky-400 border-indigo-500/30 font-semibold'
+                      : 'text-slate-400 border-transparent hover:text-white'
+                  }`}
+                >
+                  <Activity className="w-3 h-3" />
+                  <span>Synapse Fabric</span>
+                </button>
+              </div>
+
               <span className="flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-sky-400" />
-                Generative AI • Code • Vibe Coding
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Compass className="w-3 h-3 text-indigo-400" />
-                Building Practical Solutions
+                WebGL Accelerated
               </span>
             </div>
           </motion.div>
