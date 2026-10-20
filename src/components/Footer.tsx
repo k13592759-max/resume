@@ -1,9 +1,13 @@
 import React from 'react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
 import { GithubIcon, LinkedinIcon } from './SocialIcons';
-import { Mail, ArrowUp } from 'lucide-react';
+import { Mail, ArrowUp, RefreshCw } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onReplayIntro?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onReplayIntro }) => {
   const currentYear = new Date().getFullYear();
   const { personal } = PORTFOLIO_DATA;
 
@@ -89,8 +93,19 @@ export const Footer: React.FC = () => {
             ))}
           </div>
 
-          {/* Right Column: Back to top */}
-          <div className="md:col-span-2 flex justify-start md:justify-end">
+          {/* Right Column: Replay Intro & Back to top */}
+          <div className="md:col-span-2 flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-2">
+            {onReplayIntro && (
+              <button
+                onClick={onReplayIntro}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-mono text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-200/40 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-all border border-slate-300/40 dark:border-white/10"
+                title="Replay cinematic opening sequence"
+              >
+                <RefreshCw className="w-3 h-3 text-sky-400" />
+                <span>Replay Intro</span>
+              </button>
+            )}
+
             <button
               onClick={scrollToTop}
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-mono text-slate-600 dark:text-slate-300 bg-slate-200/60 dark:bg-white/5 hover:bg-slate-300/60 dark:hover:bg-white/10 border border-slate-300/50 dark:border-white/10 transition-all shadow-sm"

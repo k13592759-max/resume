@@ -12,12 +12,15 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { NotFound } from './components/NotFound';
 import { FloatingOrbs } from './components/FloatingOrbs';
+import { LiveBackground } from './components/LiveBackground';
+import { CinematicIntro } from './components/CinematicIntro';
 import { ResumeModal } from './components/ResumeModal';
 
 export const AppContent: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isNotFound, setIsNotFound] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   // Monitor scroll to update active section in navbar
   useEffect(() => {
@@ -68,7 +71,16 @@ export const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0A0C14] text-slate-900 dark:text-slate-100 selection:bg-indigo-500/25 selection:text-indigo-600 dark:selection:text-indigo-200 transition-colors duration-300 relative bg-grid-pattern">
       
-      {/* Background ambient floating gradient orbs */}
+      {/* Full-screen Cinematic Opening & Shutter Sequence */}
+      <CinematicIntro 
+        isVisible={showIntro} 
+        onComplete={() => setShowIntro(false)} 
+      />
+
+      {/* Full-screen Interactive Living Background Canvas */}
+      <LiveBackground />
+
+      {/* Ambient floating gradient orbs */}
       <FloatingOrbs />
 
       {/* Top sticky navbar with Resume trigger */}
@@ -89,8 +101,8 @@ export const AppContent: React.FC = () => {
         <Contact />
       </main>
 
-      {/* Site Footer */}
-      <Footer />
+      {/* Site Footer with Replay Intro button */}
+      <Footer onReplayIntro={() => setShowIntro(true)} />
 
       {/* Interactive Printable ATS Resume Modal */}
       <ResumeModal 
