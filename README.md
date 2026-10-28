@@ -1,25 +1,58 @@
-# Krishna Katekhaye — 3D Cinematic Developer Portfolio
+# KRISHNA: DIGITAL UNIVERSE 🎮🌌
+### A Cinematic 3D Video-Game Personal Portfolio for Krishna Katekhaye
 
-An immersive, dark, procedural 3D developer universe built for **Krishna Katekhaye** — BCA student exploring Generative AI, procedural web graphics, modern web systems, and cloud architectures.
+> *"Explore my world. Discover what I build."*
 
-Inspired by the dark luxury aesthetics and scroll-driven spatial storytelling of [sebastien-lempens.com](https://sebastien-lempens.com/), engineered with 100% original procedural Three.js geometry, volumetric exponential fog, emerald and cyan cinematic lighting, and responsive UI overlays.
+An award-winning interactive 3D video-game portfolio for **Krishna Katekhaye** — BCA student exploring Generative AI, procedural web graphics, modern web systems, and cloud architectures.
+
+Rather than a conventional portfolio website with a background canvas, visitors become **the player** pilot exploring a futuristic cyber island at dusk. Move freely, explore 5 thematic zones, interact with holographic terminals, inspect project architectures, discover verified badges, and transmit communications.
 
 ---
 
-## 🌌 Live Architecture & Highlights
+## 🌟 Key Experience Features
 
-- **Live URL**: [https://krishnakatekhaye10.github.io/](https://krishnakatekhaye10.github.io/)
-- **Repository**: `krishnakatekhaye10/krishnakatekhaye10.github.io`
-- **Design Language**: Dark obsidian void (`#030708`), emerald (`#10B981`) and cyan (`#06B6D4`) volumetric lighting, procedural cyber grid horizon, translucent glassmorphism panels, and telemetry HUD overlays.
-- **Procedural 3D World**: Zero large external 3D model files (`.gltf` / `.obj`). All crystalline cores, neural monoliths, portal nexus rings, data prisms, and beacon spires are generated at runtime via Three.js primitives and materials.
-- **Scroll-Synchronized Camera**: A continuous 7-waypoint spline camera track interpolates with exponential damping as the user traverses the document.
-- **Synthesized Ambient Audio**: Web Audio API dual-oscillator drone (55Hz / 82.4Hz) with lowpass resonant filtering and mute/unmute control.
-- **Performance & Graceful Degradation**:
-  - Lazy-loaded 3D Canvas via `React.lazy` and `Suspense`
-  - Device pixel ratio capped at 1.5 (1.0 on mobile devices)
-  - Particle count scales dynamically (850 desktop / 300 mobile)
-  - Full WebGL context fallback: If WebGL is unavailable, a fluid CSS/SVG cybernetic field displays while keeping 100% of DOM content, navigation, and accessibility functioning.
-  - Respects `prefers-reduced-motion`.
+- **🎮 Playable 3D Exploration**: Third-person hover drone surveyor with real velocity physics, levitation bobbing, banking turns, jump boosts, and boundary collision.
+- **🖥️ Desktop & 📱 Mobile Controls**:
+  - **Desktop**: `WASD` / `Arrow Keys` to move, `Space` to jump, `E` to interact, `Mouse` to look/orbit, `ESC` to pause.
+  - **Mobile**: Touch virtual analog joystick for 360° navigation, on-screen `[E]` interact and `[JUMP]` buttons, touch camera swipe.
+- **📍 Tactical Minimap Radar**: Real-time top-down 2D radar with scanning sweep, player location pointer, and one-tap fast-travel warp beacons.
+- **⚡ Non-Game Recruiter Escape Hatch**: At any moment, visitors or recruiters can click **`CLASSIC PORTFOLIO`** in the top bar to immediately switch to a traditional, structured portfolio reading view without gameplay barriers.
+- **🔊 Procedural Synthesized Soundscape**: Web Audio API ambient sci-fi drone (55Hz / 82.4Hz) with custom sound effects for terminal interactions, jumping, zone discoveries, and warp teleportation (100% procedurally generated, no external MP3 dependencies).
+- **🌿 100% Procedural Three.js World**: No heavy downloaded 3D models or expensive asset packs. Built entirely from procedural geometry, volumetric exponential fog, and cybernetic materials.
+
+---
+
+## 🗺️ The 5 World Sectors
+
+### 1. Zone 1 — The Origin (Spawn Plaza at `[0, 0, 0]`)
+- Central spawn pad with concentric energy rings and floating singularity diamond.
+- Developer overview: Krishna Katekhaye, BCA First Year student in India, building intelligent experiences with AI, code, and creativity.
+- Holographic terminal with core philosophy, education, and quick portfolio jumper.
+
+### 2. Zone 2 — Project City (`[-26, 0, -18]`)
+- Cyber skyscrapers with holographic billboards and 5 interactive terminals:
+  1. **EcoMind**: AI environmental intelligence & geospatial mapping.
+  2. **VotePath India**: Multilingual civic literacy and democratic journey guide.
+  3. **Local Language Voice AI**: Speech-to-speech vernacular Indian language assistant.
+  4. **StadiumGPT360**: Immersive 360° sports fan companion and spatial QA.
+  5. **Climatora**: Climate anomaly tracking & live meteorological telemetry.
+- Each terminal opens a detailed specification modal with architecture layers, highlights, and verified GitHub repository links.
+
+### 3. Zone 3 — Skill Lab (`[26, 0, -18]`)
+- High-tech research pavilion with floating crystalline data matrices.
+- Dual interactive consoles:
+  - **Proven Stack (Used)**: React, TypeScript, JavaScript (ES6+), Python, C Programming, Three.js, Tailwind CSS, HTML5/CSS3, Git/GitHub, Google Cloud.
+  - **AI Frontier (Currently Learning)**: Generative AI Agents & RAG (LangChain / LlamaIndex), Docker & Containerization, Vector Databases (Pinecone, ChromaDB), Kubernetes, Next.js, and WebXR.
+
+### 4. Zone 4 — Achievement Vault (`[-20, 0, 24]`)
+- Glowing digital sanctuary with crystalline arches.
+- Central holographic artifact: **Verified Google Skills Badge #25567268** with a one-click button to view the official Google public profile verification.
+- Hackathon participation and FOSS open-source community records.
+
+### 5. Zone 5 — Connection Hub (`[20, 0, 24]`)
+- Futuristic transmission station overlooking the digital horizon.
+- *"Have an interesting idea? Let's build it."*
+- One-click copy email button with instant feedback, contact form, GitHub ([@krishnakatekhaye10](https://github.com/krishnakatekhaye10)), and LinkedIn profile links.
 
 ---
 
@@ -27,68 +60,26 @@ Inspired by the dark luxury aesthetics and scroll-driven spatial storytelling of
 
 | Technology | Role |
 | :--- | :--- |
-| **React 19 & TypeScript** | Component hierarchy, state reactivity, strict type safety |
-| **Vite 8** | Next-generation frontend tooling, code-splitting, fast HMR |
-| **Three.js & @react-three/fiber** | Declarative WebGL rendering pipeline |
-| **@react-three/drei** | Three.js shader and math helpers |
-| **Framer Motion & GSAP** | Cinematic UI overlays and modal transitions |
-| **Tailwind CSS** | Custom emerald/cyan utility design system |
-| **Lucide React** | Minimalist modern icons |
-| **Web Audio API** | Procedural spatial soundscape |
+| **React 19 & TypeScript** | Game state management, component tree, and type safety |
+| **Three.js & @react-three/fiber** | Declarative 3D WebGL rendering pipeline |
+| **@react-three/drei** | In-world 3D HTML markers, shader and math helpers |
+| **Vite 8** | Modern build engine with automatic code-splitting |
+| **Framer Motion & GSAP** | HUD interface animations and modal transitions |
+| **Tailwind CSS** | Custom dark cyber design system with emerald/cyan glows |
+| **Web Audio API** | 100% procedural sound effects and ambient drone |
 
 ---
 
-## 📑 Portfolio Structure & Sections
-
-1. **Intro**: Short, skippable cinematic calibration sequence (ESC/Enter to skip, audio toggle, progress meter).
-2. **Hero (Sector 01)**: 3D Singularity Core with counter-rotating rings, introduction, live status indicator, and project CTA.
-3. **About (Sector 02)**: BCA academic focus, computational philosophy, and core pillars.
-4. **Selected Work (Sector 03)**:
-   - **EcoMind**: AI environmental intelligence & geospatial mapping
-   - **VotePath India**: Civic literacy & multilingual voter assistance
-   - **Local Language Voice AI**: Speech-to-speech vernacular Indian language assistant
-   - **StadiumGPT360**: Immersive 360° sports fan companion & spatial QA
-   - **Climatora**: Climate anomaly tracking & live meteorological telemetry
-5. **Skills (Sector 04)**: Strict separation between **Technologies Used** (Hands-on / Core) and **Technologies Learning** (Next-Gen AI & Cloud Frontier).
-6. **Achievements (Sector 05)**: Configurable showcase featuring the verified Google Skills credential (Badge #25567268) and hackathon records.
-7. **Journey (Sector 06)**: Interactive chronological voyage from academic foundations to AI exploration.
-8. **Contact (Sector 07)**: Direct transmission portal, one-click email copy, GitHub & LinkedIn connections, and availability status.
-9. **Interactive Resume**: ATS-compliant printable curriculum vitae modal.
-
----
-
-## 🛠️ Project Configuration & Customization
-
-All personal details, projects, skills, badges, and social channels are centrally managed in:
-```
-src/data/portfolioData.ts
-```
-
-### To update your contact email or LinkedIn:
-Open `src/data/portfolioData.ts` and edit lines 55–65:
-```typescript
-email: "your.real.email@gmail.com",
-github: "https://github.com/krishnakatekhaye10",
-linkedin: "https://linkedin.com/in/your-verified-handle",
-```
-
-### To add or update projects:
-Add an entry to `PORTFOLIO_DATA.projects` with:
-- `title`, `tagline`, `description`, `status` (`Active` | `In Progress` | `Concept`)
-- `category`, `accentColor`, `tags`, `githubUrl`, `highlights`, `architecture`
-
----
-
-## 💻 Local Development
+## 🛠️ Local Development
 
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Start local development server
+# 2. Run local development server
 npm run dev
 
-# 3. Build for production (TypeScript check + Vite bundling)
+# 3. Production build verification
 npm run build
 
 # 4. Preview production build locally
@@ -99,55 +90,35 @@ npm run preview
 
 ## 🚀 Publishing to GitHub Pages (`krishnakatekhaye10.github.io`)
 
-This project is configured with `base: '/'` in `vite.config.ts` and includes a GitHub Actions workflow at `.github/workflows/deploy.yml`.
+The application is configured with `base: '/'` in `vite.config.ts` and automated through `.github/workflows/deploy.yml`.
 
-### Step 1: Create the GitHub Repository
-1. Log in to GitHub as `krishnakatekhaye10`.
-2. Create a new public repository named exactly:
+### Step 1: Create Repository on GitHub
+1. Log in to [GitHub](https://github.com/) with username **`krishnakatekhaye10`**.
+2. Create a public repository named exactly:
    ```
    krishnakatekhaye10.github.io
    ```
-   *(Do not initialize with a README, .gitignore, or license since we already have them).*
 
-### Step 2: Push Your Code to GitHub
-Run the following commands in the project root directory:
-
-```bash
+### Step 2: Push Local Git Code
+Run in PowerShell:
+```powershell
 cd C:\Users\krish\.gemini\antigravity\scratch\krishna-portfolio
 
-# Initialize Git (if not already initialized)
-git init
+# Verify remote is set to your target repository
+git remote -v
 
-# Add all files
-git add .
-
-# Create initial commit
-git commit -m "feat: complete immersive 3D developer portfolio"
-
-# Set main branch
-git branch -M main
-
-# Add your GitHub repository remote
-git remote add origin https://github.com/krishnakatekhaye10/krishnakatekhaye10.github.io.git
-
-# Push to GitHub
+# Push to main
 git push -u origin main
 ```
 
-*(If you already have a remote configured, use `git push origin main` or force update if replacing an older version).*
-
-### Step 3: Enable GitHub Actions for Pages
-1. Go to your repository on GitHub: `https://github.com/krishnakatekhaye10/krishnakatekhaye10.github.io`
-2. Click **Settings** (top tab) &rarr; **Pages** (in the left sidebar under "Code and automation").
-3. Under **Build and deployment** &rarr; **Source**, select:
+### Step 3: Enable GitHub Pages Actions
+1. Go to: `https://github.com/krishnakatekhaye10/krishnakatekhaye10.github.io/settings/pages`
+2. Under **Build and deployment** &rarr; **Source**, select:
    ```
    GitHub Actions
    ```
-4. Push to `main` will automatically trigger the workflow at `.github/workflows/deploy.yml`.
-5. Once the workflow completes (usually ~45 seconds), your website will be live at:
-   ```
-   https://krishnakatekhaye10.github.io/
-   ```
+3. GitHub Actions will trigger, build, and deploy your site live to:
+   **[https://krishnakatekhaye10.github.io/](https://krishnakatekhaye10.github.io/)**
 
 ---
 
