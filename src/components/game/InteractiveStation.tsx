@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGame } from '../../game/GameContext';
 
@@ -11,14 +10,13 @@ interface InteractiveStationProps {
   prompt: string;
   position: [number, number, number];
   color: string;
-  icon?: string;
   onInteract: () => void;
 }
 
 export const InteractiveStation: React.FC<InteractiveStationProps> = ({
   id,
   title,
-  subtitle,
+  subtitle: _subtitle,
   prompt,
   position,
   color,
@@ -27,6 +25,7 @@ export const InteractiveStation: React.FC<InteractiveStationProps> = ({
   const { playerPosition, setNearbyInteractable, nearbyInteractable } = useGame();
   const ringRef = useRef<THREE.Mesh>(null);
   const coreRef = useRef<THREE.Mesh>(null);
+  const beaconRef = useRef<THREE.Mesh>(null);
   const isNearbyRef = useRef(false);
 
   useFrame((state) => {
@@ -40,6 +39,10 @@ export const InteractiveStation: React.FC<InteractiveStationProps> = ({
     if (coreRef.current) {
       coreRef.current.position.y = 1.3 + Math.sin(time * 2.0) * 0.12;
       coreRef.current.rotation.y = time * 0.6;
+    }
+    if (beaconRef.current) {
+      beaconRef.current.rotation.y = -time * 0.4;
+      beaconRef.current.position.y = 2.4 + Math.sin(time * 1.8) * 0.15;
     }
 
     // Distance check to player
@@ -100,33 +103,38 @@ export const InteractiveStation: React.FC<InteractiveStationProps> = ({
         <meshStandardMaterial
           color="#041217"
           emissive={color}
-          emissiveIntensity={1.2}
+          emissiveIntensity={1.4}
           roughness={0.1}
           metalness={0.9}
         />
       </mesh>
 
+      {/* Floating Beacon Diamond Indicator (Pure 3D, zero DOM overhead) */}
+      <mesh
+        ref={beaconRef}
+        position={[0, 2.4, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          onInteract();
+        }}
+      >
+        <dodecahedronGeometry args={[0.26, 0]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={2.0}
+          wireframe={true}
+        />
+      </mesh>
+
+      {/* Vertical Ethereal Light Column */}
+      <mesh position={[0, 2.0, 0]}>
+        <cylinderGeometry args={[0.015, 0.015, 2.5, 6]} />
+        <meshBasicMaterial color={color} transparent opacity={0.65} />
+      </mesh>
+
       {/* Ground Projection Light */}
       <pointLight position={[0, 1.5, 0]} distance={7} intensity={2.2} color={color} />
-
-      {/* 3D In-World Floating Marker */}
-      <Html position={[0, 2.3, 0]} center distanceFactor={14} zIndexRange={[10, 0]}>
-        <div
-          onClick={onInteract}
-          className="pointer-events-auto cursor-pointer select-none px-3 py-1.5 rounded-xl bg-void-950/85 border border-emerald-500/30 backdrop-blur-md shadow-lg flex flex-col items-center gap-0.5 hover:border-emerald-400 hover:scale-105 transition-all text-center min-w-[120px]"
-          style={{ borderColor: color }}
-        >
-          <span className="text-[10px] font-mono font-bold tracking-wider text-white">
-            {title}
-          </span>
-          <span className="text-[9px] font-mono text-slate-400">
-            {subtitle}
-          </span>
-          <div className="mt-1 flex items-center gap-1 text-[8px] font-mono text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/10">
-            <span>[CLICK / PRESS E]</span>
-          </div>
-        </div>
-      </Html>
     </group>
   );
 };
