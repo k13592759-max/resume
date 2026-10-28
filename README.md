@@ -1,106 +1,156 @@
-# Krishna Katekhaye — AI Developer & Generative AI Portfolio
+# Krishna Katekhaye — 3D Cinematic Developer Portfolio
 
-A modern, high-performance developer portfolio website designed with an AI aesthetic inspired by Linear and Vercel. Built with **React 19**, **TypeScript**, **Tailwind CSS**, and **Vite**.
+An immersive, dark, procedural 3D developer universe built for **Krishna Katekhaye** — BCA student exploring Generative AI, procedural web graphics, modern web systems, and cloud architectures.
 
-![Portfolio Preview](./public/favicon.svg)
-
----
-
-## ⚡ Key Highlights & Features
-
-- **Futuristic AI Aesthetic**: Dark theme by default with deep slate/violet accents, glowing radial gradients, and a functional Light/Dark theme toggle.
-- **Interactive Neural Fabric**: Custom HTML5 Canvas particle & synapse network in the Hero section responding gracefully to mouse interactions (with `prefers-reduced-motion` support).
-- **Single Source of Truth**: All personal details, projects, verified achievements, and skills live in a single centralized file: [`src/data/portfolioData.ts`](./src/data/portfolioData.ts).
-- **Honest Representation**: Early-career developer tone for a 1st-year BCA student. No fabricated claims, inflated percentages, or unverified awards.
-- **Verified Achievements**: Direct verification link to Krishna's public Google Skills badge profile.
-- **Project Concept Grid**: Showcases 5 candidate projects (EcoMind, VotePath India, StadiumGPT360, CoffeeMind, Climatora) with status tags (*In Progress*, *Concept*), architecture notes modal, and GitHub source links.
-- **Direct Contact System**: Zero-backend honest mailto dispatch with automatic clipboard backup and celebratory confetti.
-- **Resume Integration**: Direct download button wired to [`public/resume.pdf`](./public/resume.pdf).
-- **Production Ready**: Optimized bundle size, SEO meta tags, Google Fonts (`Inter` + `JetBrains Mono`), and accessible keyboard navigation.
+Inspired by the dark luxury aesthetics and scroll-driven spatial storytelling of [sebastien-lempens.com](https://sebastien-lempens.com/), engineered with 100% original procedural Three.js geometry, volumetric exponential fog, emerald and cyan cinematic lighting, and responsive UI overlays.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌌 Live Architecture & Highlights
 
-| Layer | Technology |
-|---|---|
-| **Framework** | [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org/) |
-| **Bundler** | [Vite](https://vitejs.dev/) |
-| **Styling** | [Tailwind CSS v3](https://tailwindcss.com/) with custom dark/light theme variables |
-| **Icons** | [Lucide React](https://lucide.dev/) + Custom Brand SVGs |
-| **Effects** | HTML5 Canvas Synapse Mesh + Canvas Confetti |
+- **Live URL**: [https://krishnakatekhaye10.github.io/](https://krishnakatekhaye10.github.io/)
+- **Repository**: `krishnakatekhaye10/krishnakatekhaye10.github.io`
+- **Design Language**: Dark obsidian void (`#030708`), emerald (`#10B981`) and cyan (`#06B6D4`) volumetric lighting, procedural cyber grid horizon, translucent glassmorphism panels, and telemetry HUD overlays.
+- **Procedural 3D World**: Zero large external 3D model files (`.gltf` / `.obj`). All crystalline cores, neural monoliths, portal nexus rings, data prisms, and beacon spires are generated at runtime via Three.js primitives and materials.
+- **Scroll-Synchronized Camera**: A continuous 7-waypoint spline camera track interpolates with exponential damping as the user traverses the document.
+- **Synthesized Ambient Audio**: Web Audio API dual-oscillator drone (55Hz / 82.4Hz) with lowpass resonant filtering and mute/unmute control.
+- **Performance & Graceful Degradation**:
+  - Lazy-loaded 3D Canvas via `React.lazy` and `Suspense`
+  - Device pixel ratio capped at 1.5 (1.0 on mobile devices)
+  - Particle count scales dynamically (850 desktop / 300 mobile)
+  - Full WebGL context fallback: If WebGL is unavailable, a fluid CSS/SVG cybernetic field displays while keeping 100% of DOM content, navigation, and accessibility functioning.
+  - Respects `prefers-reduced-motion`.
 
 ---
 
-## 🚀 Running Locally
+## 🚀 Tech Stack
 
-### 1. Prerequisites
-Ensure you have [Node.js](https://nodejs.org/) installed (v18 or higher recommended).
+| Technology | Role |
+| :--- | :--- |
+| **React 19 & TypeScript** | Component hierarchy, state reactivity, strict type safety |
+| **Vite 8** | Next-generation frontend tooling, code-splitting, fast HMR |
+| **Three.js & @react-three/fiber** | Declarative WebGL rendering pipeline |
+| **@react-three/drei** | Three.js shader and math helpers |
+| **Framer Motion & GSAP** | Cinematic UI overlays and modal transitions |
+| **Tailwind CSS** | Custom emerald/cyan utility design system |
+| **Lucide React** | Minimalist modern icons |
+| **Web Audio API** | Procedural spatial soundscape |
 
-### 2. Installation
-Open your terminal in this directory:
+---
+
+## 📑 Portfolio Structure & Sections
+
+1. **Intro**: Short, skippable cinematic calibration sequence (ESC/Enter to skip, audio toggle, progress meter).
+2. **Hero (Sector 01)**: 3D Singularity Core with counter-rotating rings, introduction, live status indicator, and project CTA.
+3. **About (Sector 02)**: BCA academic focus, computational philosophy, and core pillars.
+4. **Selected Work (Sector 03)**:
+   - **EcoMind**: AI environmental intelligence & geospatial mapping
+   - **VotePath India**: Civic literacy & multilingual voter assistance
+   - **Local Language Voice AI**: Speech-to-speech vernacular Indian language assistant
+   - **StadiumGPT360**: Immersive 360° sports fan companion & spatial QA
+   - **Climatora**: Climate anomaly tracking & live meteorological telemetry
+5. **Skills (Sector 04)**: Strict separation between **Technologies Used** (Hands-on / Core) and **Technologies Learning** (Next-Gen AI & Cloud Frontier).
+6. **Achievements (Sector 05)**: Configurable showcase featuring the verified Google Skills credential (Badge #25567268) and hackathon records.
+7. **Journey (Sector 06)**: Interactive chronological voyage from academic foundations to AI exploration.
+8. **Contact (Sector 07)**: Direct transmission portal, one-click email copy, GitHub & LinkedIn connections, and availability status.
+9. **Interactive Resume**: ATS-compliant printable curriculum vitae modal.
+
+---
+
+## 🛠️ Project Configuration & Customization
+
+All personal details, projects, skills, badges, and social channels are centrally managed in:
+```
+src/data/portfolioData.ts
+```
+
+### To update your contact email or LinkedIn:
+Open `src/data/portfolioData.ts` and edit lines 55–65:
+```typescript
+email: "your.real.email@gmail.com",
+github: "https://github.com/krishnakatekhaye10",
+linkedin: "https://linkedin.com/in/your-verified-handle",
+```
+
+### To add or update projects:
+Add an entry to `PORTFOLIO_DATA.projects` with:
+- `title`, `tagline`, `description`, `status` (`Active` | `In Progress` | `Concept`)
+- `category`, `accentColor`, `tags`, `githubUrl`, `highlights`, `architecture`
+
+---
+
+## 💻 Local Development
+
 ```bash
-# If using Windows PowerShell:
-npm.cmd install
-
-# Or standard bash:
+# 1. Install dependencies
 npm install
-```
 
-### 3. Start Development Server
-```bash
-npm.cmd run dev
-```
-Open your browser at `http://localhost:5173`.
+# 2. Start local development server
+npm run dev
 
-### 4. Build for Production
-```bash
-npm.cmd run build
+# 3. Build for production (TypeScript check + Vite bundling)
+npm run build
+
+# 4. Preview production build locally
+npm run preview
 ```
-This produces a static, production-optimized build in the `dist/` directory.
 
 ---
 
-## 📝 Personalizing Your Information
+## 🚀 Publishing to GitHub Pages (`krishnakatekhaye10.github.io`)
 
-To update any details on the website, simply open **[`src/data/portfolioData.ts`](./src/data/portfolioData.ts)**:
+This project is configured with `base: '/'` in `vite.config.ts` and includes a GitHub Actions workflow at `.github/workflows/deploy.yml`.
 
-1. **Email**: Change `email: "krishnakatekhaye.dev@gmail.com"` to your primary email.
-2. **LinkedIn**: Change `linkedin: "https://linkedin.com/in/krishna-katekhaye"` to your exact profile URL.
-3. **Resume PDF**: Replace `public/resume.pdf` with your actual exported PDF resume. Keep the filename as `resume.pdf`.
-4. **Projects**: Add, remove, or modify project titles, descriptions, and GitHub links in the `projects` array.
-5. **Google Skills Badges**: Add new verified badges under the `achievements` array.
-
----
-
-## 🌐 Free 1-Click Deployment
-
-### Option A: Deploy to Vercel (Recommended)
-1. Push this folder to a new GitHub repository (e.g. `krishna-portfolio`).
-2. Go to [vercel.com](https://vercel.com) and log in with GitHub.
-3. Click **"Add New Project"** and select `krishna-portfolio`.
-4. Leave build settings as default:
-   - Framework Preset: `Vite`
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-5. Click **Deploy**. Your portfolio will be live on a fast global CDN with free SSL within 60 seconds!
-
-### Option B: Deploy to GitHub Pages
-1. Install `gh-pages`:
-   ```bash
-   npm.cmd install -D gh-pages
+### Step 1: Create the GitHub Repository
+1. Log in to GitHub as `krishnakatekhaye10`.
+2. Create a new public repository named exactly:
    ```
-2. In `package.json`, add:
-   ```json
-   "homepage": "https://krishnakatekhaye10.github.io/krishna-portfolio",
-   "scripts": {
-     "predeploy": "npm run build",
-     "deploy": "gh-pages -d dist"
-   }
+   krishnakatekhaye10.github.io
    ```
-3. Run `npm.cmd run deploy`.
+   *(Do not initialize with a README, .gitignore, or license since we already have them).*
+
+### Step 2: Push Your Code to GitHub
+Run the following commands in the project root directory:
+
+```bash
+cd C:\Users\krish\.gemini\antigravity\scratch\krishna-portfolio
+
+# Initialize Git (if not already initialized)
+git init
+
+# Add all files
+git add .
+
+# Create initial commit
+git commit -m "feat: complete immersive 3D developer portfolio"
+
+# Set main branch
+git branch -M main
+
+# Add your GitHub repository remote
+git remote add origin https://github.com/krishnakatekhaye10/krishnakatekhaye10.github.io.git
+
+# Push to GitHub
+git push -u origin main
+```
+
+*(If you already have a remote configured, use `git push origin main` or force update if replacing an older version).*
+
+### Step 3: Enable GitHub Actions for Pages
+1. Go to your repository on GitHub: `https://github.com/krishnakatekhaye10/krishnakatekhaye10.github.io`
+2. Click **Settings** (top tab) &rarr; **Pages** (in the left sidebar under "Code and automation").
+3. Under **Build and deployment** &rarr; **Source**, select:
+   ```
+   GitHub Actions
+   ```
+4. Push to `main` will automatically trigger the workflow at `.github/workflows/deploy.yml`.
+5. Once the workflow completes (usually ~45 seconds), your website will be live at:
+   ```
+   https://krishnakatekhaye10.github.io/
+   ```
 
 ---
 
 ## 📄 License
-MIT License. Built for Krishna Katekhaye.
+
+MIT &copy; Krishna Katekhaye

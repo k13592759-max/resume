@@ -1,229 +1,179 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { PORTFOLIO_DATA } from '../data/portfolioData';
-import { 
-  Sun, 
-  Moon, 
-  Menu, 
-  X, 
-  Sparkles, 
-  ArrowUpRight, 
-  FileText 
-} from 'lucide-react';
+import { Volume2, VolumeX, Menu, X, FileText, Sparkles } from 'lucide-react';
+import { ambientSound } from '../utils/audio';
 
 interface NavbarProps {
   activeSection: string;
-  onOpenResume?: () => void;
+  onOpenResume: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeSection, onOpenResume }) => {
-  const { theme, toggleTheme } = useTheme();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [soundPlaying, setSoundPlaying] = useState(false);
 
   useEffect(() => {
+    const unsub = ambientSound.subscribe(setSoundPlaying);
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 40);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      unsub();
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Achievements', href: '#achievements' },
-    { name: 'Contact', href: '#contact' },
+    { id: 'hero', label: 'Overview' },
+    { id: 'about', label: 'About' },
+    { id: 'work', label: 'Selected Work' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'achievements', label: 'Achievements' },
+    { id: 'journey', label: 'Journey' },
+    { id: 'contact', label: 'Contact' },
   ];
 
-  const handleNavClick = (href: string) => {
-    setMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = (id: string) => {
+    setIsMobileMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const toggleSound = () => {
+    ambientSound.toggle();
   };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
-          ? 'glass-nav py-3 shadow-lg shadow-black/5 dark:shadow-black/20'
+          ? 'glass-nav py-3.5 shadow-2xl shadow-black/50'
           : 'bg-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          
-          {/* Logo / Name */}
-          <a
-            href="#home"
-            className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg p-1"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        {/* Brand / Logo */}
+        <button
+          onClick={() => scrollTo('hero')}
+          className="flex items-center gap-3 group text-left cursor-pointer focus:outline-none"
+        >
+          <div className="w-9 h-9 rounded-xl bg-void-850 border border-emerald-500/30 flex items-center justify-center group-hover:border-emerald-400/80 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all">
+            <span className="font-mono text-sm font-bold text-gradient-emerald-cyan">
+              KK
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-sans font-bold text-sm text-slate-100 tracking-tight group-hover:text-emerald-300 transition-colors">
+              Krishna Katekhaye
+            </span>
+            <span className="font-mono text-[10px] text-emerald-400/80 tracking-widest flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              AI &bull; SPATIAL REALM
+            </span>
+          </div>
+        </button>
+
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1 bg-void-850/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/15">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.id;
+            return (
+              <button
+                key={link.id}
+                onClick={() => scrollTo(link.id)}
+                className={`relative px-3.5 py-1 text-xs font-mono transition-all rounded-full cursor-pointer ${
+                  isActive
+                    ? 'text-emerald-300 font-semibold bg-emerald-500/15 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                    : 'text-slate-400 hover:text-slate-100 hover:bg-white/5'
+                }`}
+              >
+                {link.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Action Controls: Sound Toggle, Resume, Mobile Menu */}
+        <div className="flex items-center gap-2.5">
+          {/* Ambient Sound Button */}
+          <button
+            onClick={toggleSound}
+            type="button"
+            className={`p-2 rounded-xl text-xs font-mono transition-all border cursor-pointer ${
+              soundPlaying
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                : 'bg-void-850/80 text-slate-400 border-slate-700/60 hover:text-slate-200 hover:border-slate-600'
+            }`}
+            title={soundPlaying ? 'Mute Ambient Audio' : 'Play Ambient Audio'}
+            aria-label={soundPlaying ? 'Mute Ambient Audio' : 'Play Ambient Audio'}
           >
-            {/* Futuristic Monogram */}
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-400 via-indigo-600 to-purple-600 p-[1.5px] transition-transform duration-300 group-hover:scale-105">
-              <div className="w-full h-full bg-[#0A0C14] rounded-[10px] flex items-center justify-center">
-                <span className="font-mono font-bold text-white text-base tracking-tighter">
-                  K<span className="text-sky-400">K</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Name + Subtitle Badge */}
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white group-hover:text-sky-500 dark:group-hover:text-sky-400 transition-colors">
-                {PORTFOLIO_DATA.personal.name}
-              </span>
-              <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                AI Dev • BCA 1st Year
-              </span>
-            </div>
-          </a>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2 px-3 py-1.5 rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-300/40 dark:border-white/10 backdrop-blur-md">
-            {navLinks.map((link) => {
-              const isActive = activeSection === link.href.substring(1);
-              return (
-                <button
-                  key={link.name}
-                  onClick={() => handleNavClick(link.href)}
-                  className={`px-3.5 py-1.5 text-xs lg:text-sm font-medium rounded-full transition-all duration-200 ${
-                    isActive
-                      ? 'bg-white dark:bg-white/15 text-indigo-600 dark:text-white shadow-sm'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/30 dark:hover:bg-white/5'
-                  }`}
-                >
-                  {link.name}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Right Action Tools: Resume Button, Theme Toggle & Connect CTA */}
-          <div className="hidden md:flex items-center gap-2.5">
-            
-            {/* View Interactive Resume Button */}
-            {onOpenResume && (
-              <button
-                onClick={onOpenResume}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 bg-slate-200/60 dark:bg-white/5 hover:bg-slate-300/60 dark:hover:bg-white/10 border border-slate-300/50 dark:border-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                title="View ATS Resume & Print Options"
-              >
-                <FileText className="w-3.5 h-3.5 text-indigo-500 dark:text-sky-400" />
-                <span>Resume / CV</span>
-              </button>
+            {soundPlaying ? (
+              <Volume2 className="w-4 h-4 animate-pulse text-emerald-400" />
+            ) : (
+              <VolumeX className="w-4 h-4" />
             )}
+          </button>
 
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-200/50 dark:bg-white/5 hover:bg-slate-300/50 dark:hover:bg-white/10 border border-slate-300/40 dark:border-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400 hover:rotate-45 transition-transform duration-300" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-600 hover:-rotate-12 transition-transform duration-300" />
-              )}
-            </button>
+          {/* Interactive Resume Modal Button */}
+          <button
+            onClick={onOpenResume}
+            type="button"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-medium bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:border-emerald-400/60 transition-all cursor-pointer shadow-sm hover:shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>RESUME</span>
+          </button>
 
-            {/* Let's Connect Button */}
-            <button
-              onClick={() => handleNavClick('#contact')}
-              className="relative inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:via-indigo-500 hover:to-purple-500 shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <span>Let's Connect</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Mobile Right Controls: Resume, Theme Toggle & Hamburger */}
-          <div className="flex md:hidden items-center gap-2">
-            {onOpenResume && (
-              <button
-                onClick={onOpenResume}
-                aria-label="View Resume"
-                className="p-2 rounded-lg text-slate-700 dark:text-slate-200 bg-slate-200/50 dark:bg-white/5 border border-slate-300/40 dark:border-white/10"
-              >
-                <FileText className="w-4 h-4 text-indigo-500 dark:text-sky-400" />
-              </button>
-            )}
-
-            <button
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 bg-slate-200/50 dark:bg-white/5 border border-slate-300/40 dark:border-white/10"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-indigo-600" />
-              )}
-            </button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation menu"
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 bg-slate-200/50 dark:bg-white/5 border border-slate-300/40 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-
+          {/* Mobile Menu Trigger */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            type="button"
+            className="md:hidden p-2 rounded-xl bg-void-850/80 text-slate-300 border border-slate-700/60 hover:border-emerald-500/40 focus:outline-none"
+            aria-label="Toggle navigation menu"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-3 p-4 rounded-2xl glass-panel shadow-2xl border border-slate-200 dark:border-white/10 animate-in fade-in duration-200">
-            <div className="flex flex-col gap-1.5">
-              {navLinks.map((link) => {
-                const isActive = activeSection === link.href.substring(1);
-                return (
-                  <button
-                    key={link.name}
-                    onClick={() => handleNavClick(link.href)}
-                    className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-indigo-500/10 text-indigo-600 dark:text-sky-400 font-semibold'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
-                    }`}
-                  >
-                    <span>{link.name}</span>
-                    {isActive && <Sparkles className="w-3.5 h-3.5 text-indigo-500" />}
-                  </button>
-                );
-              })}
-
-              <div className="pt-3 mt-2 border-t border-slate-200 dark:border-white/10 flex flex-col gap-2">
-                {onOpenResume && (
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onOpenResume();
-                    }}
-                    className="w-full py-2.5 text-center text-xs font-semibold rounded-xl text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 border border-slate-300 dark:border-white/10 flex items-center justify-center gap-2"
-                  >
-                    <FileText className="w-4 h-4 text-indigo-500" />
-                    <span>View ATS Resume / CV</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => handleNavClick('#contact')}
-                  className="w-full py-2.5 text-center text-xs font-semibold rounded-xl text-white bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 shadow-md shadow-indigo-500/20"
-                >
-                  Let's Connect
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
       </div>
+
+      {/* Mobile Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden glass-panel mx-4 mt-3 rounded-2xl p-4 border border-emerald-500/20 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+          <nav className="flex flex-col gap-1.5">
+            {navLinks.map((link) => (
+              <button
+                key={link.id}
+                onClick={() => scrollTo(link.id)}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-mono transition-all text-left ${
+                  activeSection === link.id
+                    ? 'text-emerald-300 bg-emerald-500/15 font-bold border border-emerald-500/30'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span>{link.label}</span>
+                {activeSection === link.id && (
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                )}
+              </button>
+            ))}
+            <div className="pt-2 border-t border-slate-800 mt-1">
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onOpenResume();
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>VIEW INTERACTIVE RESUME</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

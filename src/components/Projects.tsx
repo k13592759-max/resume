@@ -1,339 +1,240 @@
 import React, { useState } from 'react';
+import { Terminal, ExternalLink, Sparkles, Layers, ChevronRight, X, CheckCircle2 } from 'lucide-react';
 import { PORTFOLIO_DATA, type Project } from '../data/portfolioData';
-import { ProjectCardVisual } from './ProjectCardVisual';
-import { SpotlightCard } from './SpotlightCard';
 import { GithubIcon } from './SocialIcons';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FolderGit2, 
-  ExternalLink, 
-  Clock, 
-  Sparkles, 
-  X, 
-  CheckCircle2, 
-  ArrowUpRight 
-} from 'lucide-react';
 
 export const Projects: React.FC = () => {
   const { projects } = PORTFOLIO_DATA;
-  const [filter, setFilter] = useState<'All' | 'In Progress' | 'Concept'>('All');
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [activeProjectModal, setActiveProjectModal] = useState<Project | null>(null);
 
-  const filteredProjects = projects.filter((p) => {
-    if (filter === 'All') return true;
-    return p.status === filter;
-  });
+  const categories = ['All', 'AI & GenAI', 'Civic Tech', 'Voice AI', 'Spatial Tech', 'Sustainability'];
+
+  const filteredProjects = selectedCategory === 'All'
+    ? projects
+    : projects.filter((p) => p.category === selectedCategory);
 
   return (
-    <section id="projects" className="py-24 relative overflow-hidden">
-      
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[140px] pointer-events-none -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
-        >
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-sky-400 text-xs font-mono mb-3">
-              <FolderGit2 className="w-3.5 h-3.5" />
-              <span>03 // FEATURED PROJECTS</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Curated Concepts & <span className="text-gradient">Active Builds.</span>
-            </h2>
-            <p className="mt-3 text-slate-600 dark:text-slate-400 max-w-2xl text-base">
-              Hands-on exploration of generative AI, civic literacy, and web utilities. Each project is grounded in source code on GitHub.
-            </p>
-          </div>
-
-          {/* Filter Pills with animated pill indicator */}
-          <div className="flex items-center gap-2 p-1.5 rounded-2xl glass-panel self-start md:self-auto border border-slate-200 dark:border-white/10">
-            {(['All', 'In Progress', 'Concept'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setFilter(tab)}
-                className={`relative px-3.5 py-1.5 text-xs font-medium rounded-xl transition-colors duration-200 ${
-                  filter === tab
-                    ? 'text-white dark:text-slate-900'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                {filter === tab && (
-                  <motion.div
-                    layoutId="activeFilterPill"
-                    className="absolute inset-0 bg-slate-900 dark:bg-white rounded-xl shadow-sm"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{tab === 'All' ? 'All Projects' : tab}</span>
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Project Grid with Layout Animation */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence>
-            {filteredProjects.map((project) => (
-              <motion.div
-                layout
-                key={project.id}
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.92 }}
-                transition={{ duration: 0.35 }}
-                whileHover={{ y: -6 }}
-              >
-                <SpotlightCard className="glass-panel rounded-3xl overflow-hidden flex flex-col justify-between h-full border border-slate-200/80 dark:border-white/10 hover:border-indigo-500/40 hover:shadow-2xl hover:shadow-indigo-500/10 transition-shadow duration-300 group">
-                  <div>
-                    
-                    {/* Visual Banner */}
-                    <div className="p-3">
-                      <ProjectCardVisual
-                        id={project.id}
-                        title={project.title}
-                        status={project.status}
-                      />
-                    </div>
-
-                    {/* Project Body */}
-                    <div className="p-6 pt-3">
-                      
-                      {/* Category & Status */}
-                      <div className="flex items-center justify-between gap-2 mb-2.5">
-                        <span className="text-[11px] font-mono uppercase tracking-wider text-sky-500 dark:text-sky-400 font-semibold">
-                          {project.category}
-                        </span>
-                        <span
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded-md border flex items-center gap-1 ${
-                            project.status === 'In Progress'
-                              ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
-                              : 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
-                          }`}
-                        >
-                          <Clock className="w-2.5 h-2.5" />
-                          <span>{project.status}</span>
-                        </span>
-                      </div>
-
-                      {/* Title & Tagline */}
-                      <h3 className="font-bold text-xl text-slate-900 dark:text-white group-hover:text-sky-500 dark:group-hover:text-sky-400 transition-colors mb-1">
-                        {project.title}
-                      </h3>
-                      <p className="text-xs text-indigo-500 dark:text-indigo-300 font-medium mb-3">
-                        {project.tagline}
-                      </p>
-
-                      {/* Description */}
-                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-5 line-clamp-3">
-                        {project.description}
-                      </p>
-
-                      {/* Technology Tags */}
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.04] text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-white/5"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  {/* Action Footer */}
-                  <div className="p-6 pt-0 border-t border-slate-200/60 dark:border-white/5 mt-auto flex items-center justify-between gap-3">
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-sky-400 flex items-center gap-1.5 transition-colors"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-                      <span>Concept Notes</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <motion.a
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl text-slate-800 dark:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300/60 dark:border-white/10 transition-all"
-                      >
-                        <GithubIcon className="w-3.5 h-3.5" />
-                        <span>Source</span>
-                      </motion.a>
-
-                      {project.demoUrl ? (
-                        <motion.a
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          href={project.demoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 shadow-sm"
-                        >
-                          <span>Demo</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </motion.a>
-                      ) : (
-                        <button
-                          onClick={() => setSelectedProject(project)}
-                          className="px-2.5 py-1.5 text-[11px] font-mono text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                          title="Currently in development"
-                        >
-                          Details →
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                </SpotlightCard>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* View All on GitHub Banner CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mt-14 p-8 rounded-3xl glass-panel border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left"
-        >
-          <div className="flex flex-col">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              Explore More Repositories on GitHub
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Check out experiments, code snippets, and active BCA coursework repos.
-            </p>
-          </div>
-
-          <motion.a
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.97 }}
-            href={PORTFOLIO_DATA.personal.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 shadow-lg transition-all duration-200 shrink-0"
-          >
-            <GithubIcon className="w-4 h-4" />
-            <span>View All Projects on GitHub</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </motion.a>
-        </motion.div>
-
+    <section
+      id="work"
+      className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 flex flex-col justify-center"
+    >
+      {/* Chapter Indicator */}
+      <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-cyan-400 mb-3">
+        <Terminal className="w-3.5 h-3.5" />
+        <span>SECTOR: 03 // SELECTED WORK &amp; EXPERIMENTS</span>
       </div>
 
-      {/* Project Concept Modal with Framer Motion AnimatePresence */}
-      <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-white/20 shadow-2xl relative bg-white dark:bg-[#0E111E]"
-            >
-              
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10"
-                aria-label="Close modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white font-sans">
+            Featured Systems &amp; Artifacts
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 font-mono mt-2">
+            Five core projects exploring GenAI interfaces, civic tech, regional voice, spatial 3D, and climate intelligence.
+          </p>
+        </div>
 
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-sky-400 border border-indigo-500/20">
-                  {selectedProject.status}
+        {/* Filter Pills */}
+        <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-void-850/80 border border-slate-800 backdrop-blur-md">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              type="button"
+              className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                selectedCategory === cat
+                  ? 'bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/40 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Projects Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredProjects.map((project) => (
+          <div
+            key={project.id}
+            className="glass-panel rounded-2xl p-6 border border-emerald-500/20 hover:border-emerald-400/50 transition-all flex flex-col justify-between group hover:-translate-y-1 duration-300 shadow-xl"
+          >
+            <div>
+              {/* Header Badges */}
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-void-850 border border-slate-700 text-slate-300">
+                  {project.category}
                 </span>
-                <span className="text-xs font-mono text-slate-400">
-                  {selectedProject.category}
+
+                <span
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                    project.status === 'Active'
+                      ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                      : project.status === 'In Progress'
+                      ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
+                      : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                  }`}
+                >
+                  {project.status}
                 </span>
               </div>
 
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                {selectedProject.title}
+              {/* Title & Tagline */}
+              <h3 className="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors font-sans mb-1.5">
+                {project.title}
               </h3>
-              
-              <p className="text-sm font-medium text-indigo-500 dark:text-indigo-300 mb-4">
-                {selectedProject.tagline}
+              <p className="text-xs font-mono text-emerald-400/90 mb-3.5 leading-snug">
+                {project.tagline}
               </p>
 
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-                {selectedProject.description}
+              {/* Description */}
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5 font-sans">
+                {project.description}
               </p>
 
-              {/* Key Objectives */}
-              <h4 className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-3">
-                Core Exploration Objectives:
-              </h4>
-              <div className="space-y-2.5 mb-6">
-                {selectedProject.highlights.map((h, i) => (
-                  <div key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+              {/* Highlights Checklist */}
+              <div className="space-y-2 mb-6">
+                {project.highlights.map((h, i) => (
+                  <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                     <span>{h}</span>
                   </div>
                 ))}
               </div>
+            </div>
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 mb-6">
-                {selectedProject.tags.map((tag) => (
+            {/* Footer: Tags & Actions */}
+            <div className="pt-4 border-t border-slate-800/80">
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400"
+                    className="text-[10px] font-mono px-2 py-0.5 rounded bg-void-900 border border-slate-800 text-slate-400"
                   >
-                    {tag}
+                    #{tag}
                   </span>
                 ))}
               </div>
 
-              {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-white/10">
+              <div className="flex items-center justify-between gap-3">
                 <button
-                  onClick={() => setSelectedProject(null)}
-                  className="px-4 py-2 text-xs font-medium rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
+                  onClick={() => setActiveProjectModal(project)}
+                  type="button"
+                  className="flex items-center gap-1.5 text-xs font-mono text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer group/btn"
                 >
-                  Close
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>ARCHITECTURE</span>
+                  <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
                 </button>
 
-                <a
-                  href={selectedProject.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100"
-                >
-                  <GithubIcon className="w-3.5 h-3.5" />
-                  <span>Open Repository</span>
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-void-850 hover:bg-void-800 text-slate-300 hover:text-white border border-slate-700 hover:border-emerald-500/40 transition-colors"
+                    title={`View ${project.title} on GitHub`}
+                    aria-label={`View ${project.title} on GitHub`}
+                  >
+                    <GithubIcon className="w-3.5 h-3.5" />
+                  </a>
+                  {project.demoUrl ? (
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-lg bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 border border-emerald-500/30 transition-colors"
+                      title="Live Demonstration"
+                      aria-label="Live Demonstration"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : null}
+                </div>
               </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Interactive Project Architecture Deep-Dive Modal */}
+      {activeProjectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="glass-panel max-w-2xl w-full rounded-2xl p-6 sm:p-8 border border-emerald-500/30 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setActiveProjectModal(null)}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-void-850 text-slate-400 hover:text-white border border-slate-700 hover:border-emerald-500/40 cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
 
+            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>SYSTEM SPECIFICATION</span>
+            </div>
+
+            <h3 className="text-2xl font-bold text-white mb-1 font-sans">
+              {activeProjectModal.title}
+            </h3>
+            <p className="text-xs font-mono text-cyan-400 mb-6">
+              {activeProjectModal.tagline}
+            </p>
+
+            <p className="text-sm text-slate-300 leading-relaxed mb-6 font-sans">
+              {activeProjectModal.description}
+            </p>
+
+            {/* Architecture breakdown */}
+            {activeProjectModal.architecture && (
+              <div className="mb-6 p-4 rounded-xl bg-void-900 border border-slate-800">
+                <h4 className="text-xs font-mono text-slate-400 mb-3 uppercase tracking-wider flex items-center gap-2">
+                  <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>ARCHITECTURE STACK</span>
+                </h4>
+                <ul className="space-y-2 text-xs font-mono text-slate-300">
+                  {activeProjectModal.architecture.map((layer, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-emerald-400">&bull;</span>
+                      <span>{layer}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Key Metrics */}
+            {activeProjectModal.metrics && (
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                {activeProjectModal.metrics.map((m, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-void-850 border border-slate-800 text-center">
+                    <span className="block text-xs font-bold text-white font-mono">
+                      {m.value}
+                    </span>
+                    <span className="block text-[10px] font-mono text-slate-400 mt-0.5">
+                      {m.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+              <a
+                href={activeProjectModal.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono bg-emerald-500 hover:bg-emerald-400 text-void-950 font-bold transition-all"
+              >
+                <GithubIcon className="w-4 h-4" />
+                <span>VIEW REPOSITORY</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

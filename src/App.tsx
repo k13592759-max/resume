@@ -1,50 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider } from './context/ThemeContext';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
-import { AgiLab } from './components/AgiLab';
-import { Skills } from './components/Skills';
 import { Projects } from './components/Projects';
+import { Skills } from './components/Skills';
 import { Achievements } from './components/Achievements';
-import { CurrentlyLearning } from './components/CurrentlyLearning';
+import { Journey } from './components/Journey';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
-import { NotFound } from './components/NotFound';
-import { FloatingOrbs } from './components/FloatingOrbs';
-import { LiveBackground } from './components/LiveBackground';
 import { CinematicIntro } from './components/CinematicIntro';
+import { ScrollProgressHUD } from './components/ScrollProgressHUD';
 import { ResumeModal } from './components/ResumeModal';
+import { WebGLFallback } from './components/3d/WebGLFallback';
 
-export const AppContent: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('home');
-  const [isNotFound, setIsNotFound] = useState(false);
+// Lazy load the 3D scene to ensure initial DOM render is lightning fast
+const Scene3D = lazy(() => import('./components/3d/Scene3D'));
+
+export const App: React.FC = () => {
+  const [activeSection, setActiveSection] = useState('hero');
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
 
-  // Monitor scroll to update active section in navbar
+  // Scroll listener to update scrollProgress and activeSection
   useEffect(() => {
-    // Check if path is 404
-    if (window.location.pathname !== '/' && window.location.pathname !== '') {
-      const cleanPath = window.location.pathname.replace(/^\/|\/$/g, '');
-      if (cleanPath && !cleanPath.endsWith('.html') && !cleanPath.endsWith('.pdf')) {
-        setIsNotFound(true);
-        return;
-      }
-    }
-
-    const sections = ['home', 'about', 'agi-lab', 'skills', 'projects', 'achievements', 'contact'];
-    
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
+      const scrollY = window.scrollY;
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = totalHeight > 0 ? Math.min(1, Math.max(0, scrollY / totalHeight)) : 0;
+      setScrollProgress(progress);
 
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
+      // Section tracker
+      const sections = ['hero', 'about', 'work', 'skills', 'achievements', 'journey', 'contact'];
+      const scrollPosition = scrollY + window.innerHeight * 0.35;
+
+      for (const id of sections) {
+        const el = document.getElementById(id);
         if (el) {
           const top = el.offsetTop;
           const height = el.offsetHeight;
           if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(sectionId);
+            setActiveSection(id);
             break;
           }
         }
@@ -52,73 +48,55 @@ export const AppContent: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial evaluation
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (isNotFound) {
-    return (
-      <div className="min-h-screen bg-[#0A0C14] text-slate-100 flex flex-col justify-between">
-        <Navbar activeSection="" />
-        <NotFound onReturnHome={() => {
-          window.history.pushState({}, '', '/');
-          setIsNotFound(false);
-        }} />
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0A0C14] text-slate-900 dark:text-slate-100 selection:bg-indigo-500/25 selection:text-indigo-600 dark:selection:text-indigo-200 transition-colors duration-300 relative bg-grid-pattern">
-      
-      {/* Full-screen Cinematic Opening & Shutter Sequence */}
-      <CinematicIntro 
-        isVisible={showIntro} 
-        onComplete={() => setShowIntro(false)} 
+    <div className="min-h-screen bg-[#030708] text-slate-100 selection:bg-emerald-500/25 selection:text-emerald-200 relative overflow-x-hidden">
+      {/* 1. Cinematic Intro Screen (Skippable) */}
+      <CinematicIntro
+        isVisible={showIntro}
+        onComplete={() => setShowIntro(false)}
       />
 
-      {/* Full-screen Interactive Living Background Canvas */}
-      <LiveBackground />
+      {/* 2. Main 3D Canvas Scene (Procedural Three.js Universe) */}
+      <Suspense fallback={<WebGLFallback />}>
+        <Scene3D scrollProgress={scrollProgress} />
+      </Suspense>
 
-      {/* Ambient floating gradient orbs */}
-      <FloatingOrbs />
-
-      {/* Top sticky navbar with Resume trigger */}
-      <Navbar 
-        activeSection={activeSection} 
-        onOpenResume={() => setIsResumeOpen(true)} 
+      {/* 3. Top Navigation Bar */}
+      <Navbar
+        activeSection={activeSection}
+        onOpenResume={() => setIsResumeOpen(true)}
       />
 
-      {/* Main content sections */}
-      <main id="main-content" tabIndex={-1} className="focus:outline-none">
+      {/* 4. Side HUD Scroll Tracker */}
+      <ScrollProgressHUD
+        scrollProgress={scrollProgress}
+        activeSection={activeSection}
+      />
+
+      {/* 5. Main Narrative Content Sections */}
+      <main id="main-content" className="relative z-10">
         <Hero onOpenResume={() => setIsResumeOpen(true)} />
         <About />
-        <AgiLab />
-        <Skills />
         <Projects />
+        <Skills />
         <Achievements />
-        <CurrentlyLearning />
+        <Journey />
         <Contact />
       </main>
 
-      {/* Site Footer with Replay Intro button */}
+      {/* 6. Footer */}
       <Footer onReplayIntro={() => setShowIntro(true)} />
 
-      {/* Interactive Printable ATS Resume Modal */}
-      <ResumeModal 
-        isOpen={isResumeOpen} 
-        onClose={() => setIsResumeOpen(false)} 
+      {/* 7. ATS Resume Modal */}
+      <ResumeModal
+        isOpen={isResumeOpen}
+        onClose={() => setIsResumeOpen(false)}
       />
-
     </div>
-  );
-};
-
-export const App: React.FC = () => {
-  return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
   );
 };
 
