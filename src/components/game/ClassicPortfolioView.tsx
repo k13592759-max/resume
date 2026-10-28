@@ -1,58 +1,44 @@
-import React, { useState } from 'react';
-import { Gamepad2 } from 'lucide-react';
+import React from 'react';
+import { useGame } from '../../game/GameContext';
 import { Navbar } from '../Navbar';
 import { Hero } from '../Hero';
 import { About } from '../About';
-import { Projects } from '../Projects';
 import { Skills } from '../Skills';
-import { Achievements } from '../Achievements';
-import { Journey } from '../Journey';
+import { Projects } from '../Projects';
+import { Education } from '../Education';
 import { Contact } from '../Contact';
 import { Footer } from '../Footer';
-import { ResumeModal } from '../ResumeModal';
-import { useGame } from '../../game/GameContext';
 
 export const ClassicPortfolioView: React.FC = () => {
   const { setGameMode } = useGame();
-  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#030708] text-slate-100 relative overflow-x-hidden selection:bg-emerald-500/25 selection:text-emerald-200">
-      {/* Top Floating Return to 3D Game Banner */}
-      <div className="fixed top-20 right-6 z-40 animate-bounce">
+    <div className="min-h-screen bg-[#0a0f1e] text-slate-100">
+      {/* Game mode re-entry banner */}
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-emerald-500/10 border-b border-emerald-500/20 py-2 px-4 flex items-center justify-between">
+        <span className="text-xs font-mono text-emerald-300">
+          Classic Portfolio View
+        </span>
         <button
-          onClick={() => setGameMode('playing')}
-          type="button"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-void-950 shadow-[0_0_25px_#10B981] transition-all cursor-pointer transform hover:scale-105"
+          onClick={() => setGameMode('start')}
+          className="text-xs font-mono text-emerald-400 hover:text-emerald-300 px-3 py-1 rounded border border-emerald-500/30 hover:bg-emerald-500/10 transition-colors"
         >
-          <Gamepad2 className="w-4 h-4" />
-          <span>RETURN TO 3D GAME</span>
+          ⬡ Enter 3D Universe
         </button>
       </div>
 
-      {/* Navigation */}
-      <Navbar
-        activeSection="hero"
-        onOpenResume={() => setIsResumeOpen(true)}
-      />
-
-      {/* Main Content */}
-      <main id="main-content" className="relative z-10">
-        <Hero onOpenResume={() => setIsResumeOpen(true)} />
-        <About />
-        <Projects />
-        <Skills />
-        <Achievements />
-        <Journey />
-        <Contact />
-      </main>
-
-      <Footer onReplayIntro={() => setGameMode('intro')} />
-
-      <ResumeModal
-        isOpen={isResumeOpen}
-        onClose={() => setIsResumeOpen(false)}
-      />
+      <div className="pt-9">
+        <Navbar />
+        <main>
+          <Hero />
+          <About />
+          <Skills />
+          <Projects />
+          <Education />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };

@@ -1,134 +1,46 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { ambientSound } from '../utils/audio';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export type GameMode = 'intro' | 'start' | 'playing' | 'paused' | 'classic';
-export type ModalType = 'origin' | 'project' | 'skills' | 'vault' | 'hub' | 'tutorial' | 'resume' | null;
+export type ModalType = 'project' | 'skills' | 'achievements' | 'contact' | 'origin' | null;
 
-export interface Interactable {
-  id: string;
-  title: string;
-  prompt: string;
-  onInteract: () => void;
-}
-
-export interface ZoneCoordinates {
-  id: string;
-  name: string;
-  code: string;
-  position: [number, number, number];
-  color: string;
-  desc: string;
-}
-
-export const ZONES: Record<string, ZoneCoordinates> = {
-  origin: {
-    id: 'origin',
-    name: 'The Origin',
-    code: 'ZONE 01',
-    position: [0, 0, 0],
-    color: '#10B981',
-    desc: 'Spawn Plaza & Developer Overview'
-  },
-  projects: {
-    id: 'projects',
-    name: 'Project City',
-    code: 'ZONE 02',
-    position: [-26, 0, -18],
-    color: '#06B6D4',
-    desc: 'Interactive Project Terminals'
-  },
-  skills: {
-    id: 'skills',
-    name: 'Skill Lab',
-    code: 'ZONE 03',
-    position: [26, 0, -18],
-    color: '#34D399',
-    desc: 'Research Laboratory & Tech Matrix'
-  },
-  vault: {
-    id: 'vault',
-    name: 'Achievement Vault',
-    code: 'ZONE 04',
-    position: [-20, 0, 24],
-    color: '#F59E0B',
-    desc: 'Verified Cloud Badges & Milestones'
-  },
-  hub: {
-    id: 'hub',
-    name: 'Connection Hub',
-    code: 'ZONE 05',
-    position: [20, 0, 24],
-    color: '#22D3EE',
-    desc: 'Transmission Array & Social Portal'
-  }
-};
-
-interface GameContextType {
+export interface GameState {
   gameMode: GameMode;
-  setGameMode: (mode: GameMode) => void;
-  playerPosition: [number, number, number];
-  setPlayerPosition: (pos: [number, number, number]) => void;
-  playerRotation: number;
-  setPlayerRotation: (rot: number) => void;
-  isMoving: boolean;
-  setIsMoving: (moving: boolean) => void;
-  discoveredZones: string[];
-  discoverZone: (zoneId: string) => void;
   activeModal: ModalType;
   activeProjectId: string | null;
-  openModal: (type: ModalType, projectId?: string | null) => void;
-  closeModal: () => void;
-  nearbyInteractable: Interactable | null;
-  setNearbyInteractable: (item: Interactable | null) => void;
-  joystickVector: { x: number; y: number };
-  setJoystickVector: (vec: { x: number; y: number }) => void;
-  soundEnabled: boolean;
-  toggleSound: () => void;
-  teleportTo: (position: [number, number, number], zoneId?: string) => void;
-  teleportTarget: [number, number, number] | null;
-  clearTeleportTarget: () => void;
-  hasJumped: boolean;
-  triggerJump: () => void;
-  clearJump: () => void;
+  discoveredZones: Set<string>;
+  currentZone: string | null;
+  showInteractPrompt: boolean;
+  interactTarget: string | null;
+  playerPosition: { x: number; z: number };
 }
 
-const GameContext = createContext<GameContextType | undefined>(undefined);
+interface GameContextValue extends GameState {
+  setGameMode: (mode: GameMode) => void;
+  openModal: (modal: ModalType, projectId?: string) => void;
+  closeModal: () => void;
+  discoverZone: (zoneId: string) => void;
+  setCurrentZone: (zone: string | null) => void;
+  showPrompt: (target: string) => void;
+  hidePrompt: () => void;
+  setPlayerPos: (x: number, z: number) => void;
+}
 
-export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+const GameContext = createContext<GameContextValue | null>(null);
+
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [gameMode, setGameMode] = useState<GameMode>('intro');
-  const [playerPosition, setPlayerPosition] = useState<[number, number, number]>([0, 1.2, 0]);
-  const [playerRotation, setPlayerRotation] = useState<number>(0);
-  const [isMoving, setIsMoving] = useState<boolean>(false);
-  const [discoveredZones, setDiscoveredZones] = useState<string[]>(['origin']);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
-  const [nearbyInteractable, setNearbyInteractable] = useState<Interactable | null>(null);
-  const [joystickVector, setJoystickVector] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
-  const [teleportTarget, setTeleportTarget] = useState<[number, number, number] | null>(null);
-  const [hasJumped, setHasJumped] = useState<boolean>(false);
+  const [discoveredZones, setDiscoveredZones] = useState<Set<string>>(new Set());
+  const [currentZone, setCurrentZone] = useState<string | null>(null);
+  const [showInteractPrompt, setShowInteractPrompt] = useState(false);
+  const [interactTarget, setInteractTarget] = useState<string | null>(null);
+  const [playerPosition, setPlayerPosition] = useState({ x: 0, z: 0 });
 
-  useEffect(() => {
-    const unsub = ambientSound.subscribe(setSoundEnabled);
-    return () => unsub();
-  }, []);
-
-  const toggleSound = useCallback(() => {
-    ambientSound.toggle();
-  }, []);
-
-  const discoverZone = useCallback((zoneId: string) => {
-    setDiscoveredZones((prev) => {
-      if (prev.includes(zoneId)) return prev;
-      ambientSound.playDiscoverSound();
-      return [...prev, zoneId];
-    });
-  }, []);
-
-  const openModal = useCallback((type: ModalType, projectId: string | null = null) => {
-    ambientSound.playInteractSound();
-    setActiveModal(type);
-    setActiveProjectId(projectId);
+  const openModal = useCallback((modal: ModalType, projectId?: string) => {
+    setActiveModal(modal);
+    if (projectId) setActiveProjectId(projectId);
+    else setActiveProjectId(null);
   }, []);
 
   const closeModal = useCallback(() => {
@@ -136,85 +48,43 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setActiveProjectId(null);
   }, []);
 
-  const teleportTo = useCallback((position: [number, number, number], zoneId?: string) => {
-    ambientSound.playTeleportSound();
-    setTeleportTarget(position);
-    if (zoneId) {
-      discoverZone(zoneId);
-    }
-  }, [discoverZone]);
-
-  const clearTeleportTarget = useCallback(() => {
-    setTeleportTarget(null);
+  const discoverZone = useCallback((zoneId: string) => {
+    setDiscoveredZones((prev) => new Set([...prev, zoneId]));
   }, []);
 
-  const triggerJump = useCallback(() => {
-    setHasJumped(true);
-    ambientSound.playJumpSound();
+  const showPrompt = useCallback((target: string) => {
+    setShowInteractPrompt(true);
+    setInteractTarget(target);
   }, []);
 
-  const clearJump = useCallback(() => {
-    setHasJumped(false);
+  const hidePrompt = useCallback(() => {
+    setShowInteractPrompt(false);
+    setInteractTarget(null);
   }, []);
 
-  // Global key listener for interaction [E] and Pause [ESC]
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept typing in inputs
-      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
-        return;
-      }
-
-      if (e.key === 'e' || e.key === 'E') {
-        if (nearbyInteractable && !activeModal && gameMode === 'playing') {
-          nearbyInteractable.onInteract();
-        }
-      }
-
-      if (e.key === 'Escape') {
-        if (activeModal) {
-          closeModal();
-        } else if (gameMode === 'playing') {
-          setGameMode('paused');
-        } else if (gameMode === 'paused') {
-          setGameMode('playing');
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nearbyInteractable, activeModal, gameMode, closeModal]);
+  const setPlayerPos = useCallback((x: number, z: number) => {
+    setPlayerPosition({ x, z });
+  }, []);
 
   return (
     <GameContext.Provider
       value={{
         gameMode,
-        setGameMode,
-        playerPosition,
-        setPlayerPosition,
-        playerRotation,
-        setPlayerRotation,
-        isMoving,
-        setIsMoving,
-        discoveredZones,
-        discoverZone,
         activeModal,
         activeProjectId,
+        discoveredZones,
+        currentZone,
+        showInteractPrompt,
+        interactTarget,
+        playerPosition,
+        setGameMode,
         openModal,
         closeModal,
-        nearbyInteractable,
-        setNearbyInteractable,
-        joystickVector,
-        setJoystickVector,
-        soundEnabled,
-        toggleSound,
-        teleportTo,
-        teleportTarget,
-        clearTeleportTarget,
-        hasJumped,
-        triggerJump,
-        clearJump
+        discoverZone,
+        setCurrentZone,
+        showPrompt,
+        hidePrompt,
+        setPlayerPos,
       }}
     >
       {children}
@@ -222,10 +92,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-export const useGame = () => {
-  const context = useContext(GameContext);
-  if (!context) {
-    throw new Error('useGame must be used within a GameProvider');
-  }
-  return context;
+export const useGame = (): GameContextValue => {
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error('useGame must be used within GameProvider');
+  return ctx;
 };

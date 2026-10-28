@@ -1,37 +1,27 @@
 import React from 'react';
+import { useGame } from '../../game/GameContext';
 
 export const WebGLFallback: React.FC = () => {
+  const { setGameMode } = useGame();
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#030708]">
-      {/* Ambient Gradient Glow Orbs */}
-      <div 
-        className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[120px] animate-pulse-slow"
-        aria-hidden="true"
-      />
-      <div 
-        className="absolute bottom-1/3 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[140px] animate-pulse-slow"
-        style={{ animationDelay: '3s' }}
-        aria-hidden="true"
-      />
-
-      {/* Cybernetic Geometric Grid */}
-      <div 
-        className="absolute inset-0 cyber-grid opacity-40"
-        aria-hidden="true"
-      />
-
-      {/* Horizon glow line */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-emerald-950/20 via-transparent to-transparent pointer-events-none" 
-        aria-hidden="true"
-      />
-
-      {/* Fallback notification pill for accessibility */}
-      <div className="absolute bottom-6 right-6 z-20 pointer-events-auto">
-        <div className="px-3 py-1.5 rounded-full text-[10px] font-mono tracking-wider bg-void-850/80 border border-emerald-500/20 text-slate-400 backdrop-blur-md">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mr-2 animate-ping" />
-          FALLBACK VIEW: ACCESSIBLE MODE ACTIVE
+    <div className="w-full h-full flex items-center justify-center bg-[#030708]">
+      <div className="text-center p-8 max-w-md">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6 text-2xl">
+          ⚡
         </div>
+        <h2 className="text-2xl font-bold text-white mb-2">Loading Universe…</h2>
+        <p className="text-slate-400 text-sm mb-6">Preparing your 3D environment.</p>
+        <div className="flex gap-2 justify-center">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-2 h-2 rounded-full bg-emerald-500/40 animate-pulse" style={{ animationDelay: `${i * 0.15}s` }} />
+          ))}
+        </div>
+        <button
+          onClick={() => setGameMode('classic')}
+          className="mt-6 text-xs font-mono text-slate-500 hover:text-slate-300 underline transition-colors"
+        >
+          Skip — View Classic Portfolio
+        </button>
       </div>
     </div>
   );

@@ -1,142 +1,108 @@
-import React from 'react';
-import { ArrowDown, Sparkles, ExternalLink, Mail, Terminal } from 'lucide-react';
-import { PORTFOLIO_DATA } from '../data/portfolioData';
-import { GithubIcon, LinkedinIcon } from './SocialIcons';
+import React, { useEffect, useRef } from 'react';
+import { PERSONAL } from '../data/portfolioData';
 
-interface HeroProps {
-  onOpenResume: () => void;
-}
+export const Hero: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
-  const { personal } = PORTFOLIO_DATA;
+  // Subtle parallax orb effect on mouse move
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const orb = el.querySelector<HTMLElement>('[data-orb]');
+    if (!orb) return;
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    const onMove = (e: MouseEvent) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const dx = (e.clientX - cx) / cx;
+      const dy = (e.clientY - cy) / cy;
+      orb.style.transform = `translate(${dx * 18}px, ${dy * 12}px)`;
+    };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  const scrollTo = (id: string) => {
+    document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex flex-col justify-between pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 select-none"
+      ref={containerRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden dot-grid"
     >
-      {/* Top HUD Telemetry & Sector Marker */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 text-[11px] font-mono tracking-wider text-slate-500">
-        <div className="flex items-center gap-2">
-          <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-slate-400">SECTOR: 01 // THE SINGULARITY CORE</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 rounded-full bg-void-850/80 border border-emerald-500/20 text-emerald-400 flex items-center gap-1.5 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            {personal.statusText}
-          </span>
-          <span className="hidden sm:inline text-slate-600">|</span>
-          <span className="hidden sm:inline text-slate-400">{personal.location}</span>
-        </div>
+      {/* Background ambient glow orbs */}
+      <div
+        data-orb
+        className="pointer-events-none absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-out"
+        aria-hidden="true"
+      >
+        <div className="absolute w-[480px] h-[480px] rounded-full bg-blue-600/8 blur-[100px] -translate-x-32 -translate-y-20" />
+        <div className="absolute w-[360px] h-[360px] rounded-full bg-violet-600/8 blur-[80px] translate-x-40 translate-y-24" />
       </div>
 
-      {/* Main Hero Centerpiece */}
-      <div className="my-auto py-12 max-w-3xl">
-        {/* Subtle Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-void-850/80 border border-emerald-500/25 backdrop-blur-md mb-6 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-xs font-mono text-emerald-300 tracking-wide">
-            {personal.education}
-          </span>
+      {/* Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 pt-20 pb-12 text-center">
+        {/* Status badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/20 bg-blue-500/8 text-blue-300 text-xs font-medium font-mono mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+          {PERSONAL.availableFor}
         </div>
 
-        {/* Name Title */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 font-sans">
-          <span>I&apos;m </span>
-          <span className="text-gradient-emerald-cyan">
-            {personal.name}
-          </span>
+        {/* Headline */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none mb-5">
+          <span className="text-slate-100">Hi, I'm </span>
+          <span className="text-gradient-blue-violet">{PERSONAL.name}</span>
         </h1>
 
-        {/* Subtitle / Role */}
-        <p className="text-xl sm:text-2xl font-light text-slate-200 tracking-wide mb-6 font-sans">
-          {personal.title}
+        {/* Role / subtitle */}
+        <p className="text-lg sm:text-xl md:text-2xl font-medium text-slate-300 mb-4">
+          {PERSONAL.headline}
         </p>
 
-        {/* Short Bio */}
-        <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mb-10 font-sans">
-          {personal.shortBio}
+        {/* Subtext */}
+        <p className="max-w-xl mx-auto text-slate-400 text-base sm:text-lg leading-relaxed mb-10">
+          {PERSONAL.subheadline}
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-wrap items-center gap-4">
+        {/* CTA row */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <button
-            onClick={() => scrollToSection('work')}
-            type="button"
-            className="flex items-center gap-2.5 px-6 py-3 rounded-xl font-mono text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-void-950 shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_35px_rgba(16,185,129,0.6)] transition-all cursor-pointer transform hover:-translate-y-0.5"
+            onClick={() => scrollTo('#projects')}
+            className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-blue-900/30"
           >
-            <span>EXPLORE SELECTED WORK</span>
-            <ArrowDown className="w-4 h-4" />
+            Explore Projects
           </button>
-
-          <button
-            onClick={() => scrollToSection('contact')}
-            type="button"
-            className="flex items-center gap-2 px-5 py-3 rounded-xl font-mono text-xs font-medium bg-void-850/80 hover:bg-void-800 text-slate-200 border border-emerald-500/25 hover:border-emerald-400/50 backdrop-blur-md transition-all cursor-pointer transform hover:-translate-y-0.5"
-          >
-            <Mail className="w-4 h-4 text-emerald-400" />
-            <span>GET IN TOUCH</span>
-          </button>
-
-          <button
-            onClick={onOpenResume}
-            type="button"
-            className="flex items-center gap-2 px-4 py-3 rounded-xl font-mono text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <span>VIEW RESUME</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Quick Social Links Bar */}
-        <div className="flex items-center gap-4 mt-8 pt-6 border-t border-slate-800/60 text-slate-400 text-xs font-mono">
-          <span className="text-slate-500">CONNECT:</span>
           <a
-            href={personal.github}
+            href={PERSONAL.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors"
+            className="px-6 py-3 rounded-lg border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold text-sm transition-colors"
           >
-            <GithubIcon className="w-4 h-4" />
-            <span>GITHUB</span>
+            LinkedIn Profile
           </a>
           <a
-            href={personal.linkedin}
+            href={PERSONAL.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 hover:text-cyan-400 transition-colors"
+            className="px-6 py-3 rounded-lg border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200 font-semibold text-sm transition-colors"
           >
-            <LinkedinIcon className="w-4 h-4" />
-            <span>LINKEDIN</span>
+            GitHub
           </a>
         </div>
-      </div>
 
-      {/* Bottom Scroll Indicator */}
-      <div className="flex items-center justify-between text-xs font-mono text-slate-500 pt-6">
-        <div className="flex items-center gap-3">
-          <div className="w-5 h-8 rounded-full border border-emerald-500/30 flex items-start justify-center p-1">
-            <div className="w-1.5 h-2 rounded-full bg-emerald-400 animate-bounce" />
-          </div>
-          <span className="tracking-widest text-[10px] text-slate-400">
-            SCROLL TO COMMENCE JOURNEY
-          </span>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-6 text-[10px] tracking-wider text-slate-500">
-          <span>AI / GENAI</span>
-          <span>&bull;</span>
-          <span>SPATIAL THREE.JS</span>
-          <span>&bull;</span>
-          <span>MODERN CLOUD</span>
+        {/* Scroll cue */}
+        <div className="mt-16 flex justify-center">
+          <button
+            onClick={() => scrollTo('#about')}
+            aria-label="Scroll to About"
+            className="flex flex-col items-center gap-2 text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            <span className="text-xs font-mono tracking-widest uppercase">Scroll</span>
+            <div className="w-px h-8 bg-gradient-to-b from-slate-500 to-transparent" />
+          </button>
         </div>
       </div>
     </section>

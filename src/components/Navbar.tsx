@@ -1,177 +1,111 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Menu, X, FileText, Sparkles } from 'lucide-react';
-import { ambientSound } from '../utils/audio';
+import { PERSONAL } from '../data/portfolioData';
 
-interface NavbarProps {
-  activeSection: string;
-  onOpenResume: () => void;
-}
+const NAV_LINKS = [
+  { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Education', href: '#education' },
+  { label: 'Contact', href: '#contact' },
+];
 
-export const Navbar: React.FC<NavbarProps> = ({ activeSection, onOpenResume }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [soundPlaying, setSoundPlaying] = useState(false);
+export const Navbar: React.FC = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const unsub = ambientSound.subscribe(setSoundPlaying);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      unsub();
-      window.removeEventListener('scroll', handleScroll);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = [
-    { id: 'hero', label: 'Overview' },
-    { id: 'about', label: 'About' },
-    { id: 'work', label: 'Selected Work' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'achievements', label: 'Achievements' },
-    { id: 'journey', label: 'Journey' },
-    { id: 'contact', label: 'Contact' },
-  ];
-
-  const scrollTo = (id: string) => {
-    setIsMobileMenuOpen(false);
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const toggleSound = () => {
-    ambientSound.toggle();
+  const handleNav = (href: string) => {
+    setMenuOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled
-          ? 'glass-nav py-3.5 shadow-2xl shadow-black/50'
-          : 'bg-transparent py-5'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'glass-nav shadow-md' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Brand / Logo */}
-        <button
-          onClick={() => scrollTo('hero')}
-          className="flex items-center gap-3 group text-left cursor-pointer focus:outline-none"
+      <nav className="max-w-5xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+        {/* Logo / Name */}
+        <a
+          href="#hero"
+          onClick={(e) => { e.preventDefault(); handleNav('#hero'); }}
+          className="font-semibold text-sm tracking-wide text-slate-100 hover:text-blue-400 transition-colors"
         >
-          <div className="w-9 h-9 rounded-xl bg-void-850 border border-emerald-500/30 flex items-center justify-center group-hover:border-emerald-400/80 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.35)] transition-all">
-            <span className="font-mono text-sm font-bold text-gradient-emerald-cyan">
-              KK
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-sans font-bold text-sm text-slate-100 tracking-tight group-hover:text-emerald-300 transition-colors">
-              Krishna Katekhaye
-            </span>
-            <span className="font-mono text-[10px] text-emerald-400/80 tracking-widest flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              AI &bull; SPATIAL REALM
-            </span>
-          </div>
-        </button>
+          {PERSONAL.name.split(' ')[0]}{' '}
+          <span className="text-blue-400">{PERSONAL.name.split(' ')[1]}</span>
+        </a>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-void-850/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/15">
-          {navLinks.map((link) => {
-            const isActive = activeSection === link.id;
-            return (
+        {/* Desktop links */}
+        <ul className="hidden md:flex items-center gap-6">
+          {NAV_LINKS.map((link) => (
+            <li key={link.href}>
               <button
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                className={`relative px-3.5 py-1 text-xs font-mono transition-all rounded-full cursor-pointer ${
-                  isActive
-                    ? 'text-emerald-300 font-semibold bg-emerald-500/15 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-white/5'
-                }`}
+                onClick={() => handleNav(link.href)}
+                className="text-sm text-slate-400 hover:text-slate-100 transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded"
               >
                 {link.label}
               </button>
-            );
-          })}
-        </nav>
+            </li>
+          ))}
+        </ul>
 
-        {/* Action Controls: Sound Toggle, Resume, Mobile Menu */}
-        <div className="flex items-center gap-2.5">
-          {/* Ambient Sound Button */}
-          <button
-            onClick={toggleSound}
-            type="button"
-            className={`p-2 rounded-xl text-xs font-mono transition-all border cursor-pointer ${
-              soundPlaying
-                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                : 'bg-void-850/80 text-slate-400 border-slate-700/60 hover:text-slate-200 hover:border-slate-600'
-            }`}
-            title={soundPlaying ? 'Mute Ambient Audio' : 'Play Ambient Audio'}
-            aria-label={soundPlaying ? 'Mute Ambient Audio' : 'Play Ambient Audio'}
-          >
-            {soundPlaying ? (
-              <Volume2 className="w-4 h-4 animate-pulse text-emerald-400" />
-            ) : (
-              <VolumeX className="w-4 h-4" />
-            )}
-          </button>
+        {/* Desktop CTA */}
+        <a
+          href={PERSONAL.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden md:inline-flex items-center gap-2 px-4 py-1.5 rounded-md border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/10 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+          </svg>
+          GitHub
+        </a>
 
-          {/* Interactive Resume Modal Button */}
-          <button
-            onClick={onOpenResume}
-            type="button"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-medium bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:border-emerald-400/60 transition-all cursor-pointer shadow-sm hover:shadow-[0_0_15px_rgba(16,185,129,0.25)]"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>RESUME</span>
-          </button>
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden p-2 rounded text-slate-400 hover:text-slate-100 focus:outline-none"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <div className="w-5 flex flex-col gap-1.5">
+            <span className={`block h-0.5 bg-current transition-all duration-200 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`block h-0.5 bg-current transition-all duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block h-0.5 bg-current transition-all duration-200 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+          </div>
+        </button>
+      </nav>
 
-          {/* Mobile Menu Trigger */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            type="button"
-            className="md:hidden p-2 rounded-xl bg-void-850/80 text-slate-300 border border-slate-700/60 hover:border-emerald-500/40 focus:outline-none"
-            aria-label="Toggle navigation menu"
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden glass-panel mx-4 mt-3 rounded-2xl p-4 border border-emerald-500/20 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-          <nav className="flex flex-col gap-1.5">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-mono transition-all text-left ${
-                  activeSection === link.id
-                    ? 'text-emerald-300 bg-emerald-500/15 font-bold border border-emerald-500/30'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span>{link.label}</span>
-                {activeSection === link.id && (
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                )}
-              </button>
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="md:hidden glass-nav border-t border-slate-800 px-5 pb-4 pt-2">
+          <ul className="flex flex-col gap-1">
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <button
+                  onClick={() => handleNav(link.href)}
+                  className="w-full text-left py-2 px-2 text-sm text-slate-300 hover:text-white transition-colors rounded"
+                >
+                  {link.label}
+                </button>
+              </li>
             ))}
-            <div className="pt-2 border-t border-slate-800 mt-1">
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onOpenResume();
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>VIEW INTERACTIVE RESUME</span>
-              </button>
-            </div>
-          </nav>
+          </ul>
+          <a
+            href={PERSONAL.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex items-center gap-2 px-3 py-2 rounded border border-blue-500/30 text-blue-400 text-sm font-medium"
+          >
+            GitHub Profile
+          </a>
         </div>
       )}
     </header>

@@ -1,172 +1,155 @@
-import React, { useState, useEffect } from 'react';
-import { Layers, HelpCircle, Volume2, VolumeX, Sparkles, FastForward, Gamepad2 } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import { useGame } from '../../game/GameContext';
-import { PORTFOLIO_DATA } from '../../data/portfolioData';
 
-export const StartScreen: React.FC<{ onOpenTutorial: () => void }> = ({ onOpenTutorial }) => {
-  const { setGameMode, soundEnabled, toggleSound } = useGame();
-  const { personal } = PORTFOLIO_DATA;
-  const [cinematicStage, setCinematicStage] = useState<'portal' | 'title' | 'menu'>('portal');
+interface StartScreenProps {
+  onOpenTutorial: () => void;
+}
+
+export const StartScreen: React.FC<StartScreenProps> = ({ onOpenTutorial }) => {
+  const { setGameMode } = useGame();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const taglineRef = useRef<HTMLParagraphElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Cinematic timeline
-    const t1 = setTimeout(() => {
-      setCinematicStage('title');
-    }, 1800);
-
-    const t2 = setTimeout(() => {
-      setCinematicStage('menu');
-    }, 3200);
-
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-        setCinematicStage('menu');
-      }
-    };
-    window.addEventListener('keydown', handleKey);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      window.removeEventListener('keydown', handleKey);
-    };
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    if (titleRef.current && taglineRef.current && buttonsRef.current) {
+      tl.fromTo(titleRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2 })
+        .fromTo(taglineRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.4')
+        .fromTo(buttonsRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.2');
+    }
   }, []);
 
-  const skipToMenu = () => {
-    setCinematicStage('menu');
+  const handlePlay = () => {
+    const tl = gsap.timeline();
+    if (containerRef.current) {
+      tl.to(containerRef.current, { opacity: 0, duration: 0.6, onComplete: () => setGameMode('playing') });
+    } else {
+      setGameMode('playing');
+    }
   };
 
-  const handleStartGame = () => {
-    setGameMode('playing');
-  };
-
-  const handleOpenClassic = () => {
+  const handleClassic = () => {
     setGameMode('classic');
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#030708] px-4 select-none overflow-hidden">
-      {/* Dynamic Ambient Background Glows */}
-      <div className="absolute w-[600px] h-[600px] rounded-full bg-emerald-500/15 blur-[140px] pointer-events-none" />
-      <div className="absolute w-[500px] h-[500px] rounded-full bg-cyan-500/15 blur-[120px] pointer-events-none" />
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-[#030708]"
+    >
+      {/* Animated particle field */}
+      <ParticleField />
 
-      {/* Cyber Grid background */}
-      <div className="absolute inset-0 cyber-grid opacity-30 pointer-events-none" />
-
-      {/* ======================================================== */}
-      {/* 1. PORTAL STAGE                                          */}
-      {/* ======================================================== */}
-      {cinematicStage === 'portal' && (
-        <div className="flex flex-col items-center justify-center text-center animate-in fade-in duration-700">
-          <div className="relative mb-6">
-            {/* Pulsing energy line portal */}
-            <div className="w-24 h-24 rounded-full border-2 border-emerald-400 animate-spin-very-slow flex items-center justify-center shadow-[0_0_35px_#10B981]">
-              <div className="w-16 h-16 rounded-full border border-cyan-400 animate-ping" />
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center text-emerald-300 font-mono text-xs">
-              PORTAL
-            </div>
-          </div>
-          <span className="text-xs font-mono text-emerald-400 tracking-widest uppercase">
-            CALIBRATING DIGITAL UNIVERSE...
-          </span>
-        </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* 2. TITLE / MENU STAGE                                    */}
-      {/* ======================================================== */}
-      {(cinematicStage === 'title' || cinematicStage === 'menu') && (
-        <div className="flex flex-col items-center text-center max-w-xl animate-in fade-in zoom-in-95 duration-500">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-void-850/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono mb-4 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>3D VIDEO-GAME PORTFOLIO</span>
-          </div>
-
-          {/* Game Title */}
-          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight font-sans mb-2">
-            KRISHNA: <span className="text-gradient-emerald-cyan">DIGITAL UNIVERSE</span>
-          </h1>
-
-          {/* Subtitle / Tagline */}
-          <p className="text-sm sm:text-base font-mono text-cyan-400 tracking-wide mb-2">
-            &ldquo;Explore my world. Discover what I build.&rdquo;
-          </p>
-          <p className="text-xs text-slate-400 font-sans max-w-md mb-8">
-            {personal.education} &bull; AI, Generative AI &amp; Modern Web Systems
-          </p>
-
-          {/* Main Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
-            <button
-              onClick={handleStartGame}
-              type="button"
-              className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl font-mono text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-void-950 shadow-[0_0_30px_rgba(16,185,129,0.45)] hover:shadow-[0_0_40px_rgba(16,185,129,0.65)] transition-all cursor-pointer transform hover:-translate-y-0.5"
-            >
-              <Gamepad2 className="w-4 h-4" />
-              <span>ENTER GAME UNIVERSE [PLAY]</span>
-            </button>
-
-            <button
-              onClick={handleOpenClassic}
-              type="button"
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl font-mono text-xs font-medium bg-void-850 hover:bg-void-800 text-slate-200 border border-slate-700 hover:border-emerald-500/40 transition-all cursor-pointer"
-            >
-              <Layers className="w-4 h-4 text-emerald-400" />
-              <span>CLASSIC PORTFOLIO (RECRUITER VIEW)</span>
-            </button>
-          </div>
-
-          {/* Secondary Controls: Tutorial & Sound */}
-          <div className="flex items-center gap-4 mt-6">
-            <button
-              onClick={onOpenTutorial}
-              type="button"
-              className="flex items-center gap-1.5 text-xs font-mono text-slate-400 hover:text-white transition-colors cursor-pointer"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span>HOW TO PLAY &bull; CONTROLS</span>
-            </button>
-
-            <span className="text-slate-700">&bull;</span>
-
-            <button
-              onClick={toggleSound}
-              type="button"
-              className="flex items-center gap-1.5 text-xs font-mono text-slate-400 hover:text-white transition-colors cursor-pointer"
-            >
-              {soundEnabled ? (
-                <>
-                  <Volume2 className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                  <span>SOUND: ON</span>
-                </>
-              ) : (
-                <>
-                  <VolumeX className="w-3.5 h-3.5 text-slate-500" />
-                  <span>SOUND: OFF</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Skip button if in portal stage */}
-      {cinematicStage === 'portal' && (
-        <button
-          onClick={skipToMenu}
-          className="absolute bottom-6 flex items-center gap-1.5 text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
-        >
-          <span>SKIP CINEMATIC</span>
-          <FastForward className="w-3.5 h-3.5" />
-        </button>
-      )}
-
-      {/* Bottom Footer Note */}
-      <div className="absolute bottom-4 text-[10px] font-mono text-slate-600">
-        &copy; {new Date().getFullYear()} Krishna Katekhaye &bull; github.com/krishnakatekhaye10
+      {/* Central portal ring */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-[500px] h-[500px] rounded-full border border-emerald-500/10 animate-pulse-slow" />
+        <div className="absolute w-[380px] h-[380px] rounded-full border border-emerald-500/15 animate-spin-very-slow" />
+        <div className="absolute w-[260px] h-[260px] rounded-full border border-cyan-500/20" />
+        <div className="absolute w-[140px] h-[140px] rounded-full bg-emerald-500/5 blur-2xl" />
       </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-2xl">
+        {/* Mono label */}
+        <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/8 text-emerald-300 text-xs font-mono tracking-widest">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          INTERACTIVE UNIVERSE
+        </div>
+
+        {/* Title */}
+        <div ref={titleRef} className="opacity-0 mb-2">
+          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white leading-none">
+            KRISHNA
+          </h1>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-emerald-400 mt-1">
+            DIGITAL UNIVERSE
+          </h2>
+        </div>
+
+        {/* Tagline */}
+        <p
+          ref={taglineRef}
+          className="opacity-0 text-slate-400 text-sm sm:text-base font-mono mt-4 mb-10"
+        >
+          "Explore my world. Discover what I build."
+        </p>
+
+        {/* Buttons */}
+        <div ref={buttonsRef} className="opacity-0 flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+          <button
+            onClick={handlePlay}
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:shadow-[0_0_45px_rgba(16,185,129,0.6)] transition-all active:scale-95"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            ENTER UNIVERSE
+          </button>
+
+          <button
+            onClick={onOpenTutorial}
+            className="px-5 py-3.5 rounded-xl border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-white font-medium text-sm transition-colors active:scale-95"
+          >
+            HOW TO PLAY
+          </button>
+        </div>
+
+        <button
+          onClick={handleClassic}
+          className="mt-4 text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors underline underline-offset-2"
+        >
+          Skip — View Classic Portfolio
+        </button>
+      </div>
+
+      {/* Bottom credit */}
+      <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-4 text-xs font-mono text-slate-600">
+        <span>KRISHNA KATEKHAYE</span>
+        <span>·</span>
+        <span>BCA STUDENT · AI DEVELOPER</span>
+        <span>·</span>
+        <span>INDIA</span>
+      </div>
+    </div>
+  );
+};
+
+// Lightweight canvas-free particle field using CSS divs
+const ParticleField: React.FC = () => {
+  const particles = React.useMemo(() =>
+    Array.from({ length: 60 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 2 + 0.5,
+      opacity: Math.random() * 0.5 + 0.1,
+      duration: Math.random() * 4 + 3,
+      delay: Math.random() * 3,
+    })), []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="absolute rounded-full bg-emerald-400 animate-pulse"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            opacity: p.opacity,
+            animationDuration: `${p.duration}s`,
+            animationDelay: `${p.delay}s`,
+          }}
+        />
+      ))}
+      {/* Ambient glow blobs */}
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-emerald-500/5 blur-[80px] animate-pulse-slow" />
+      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-cyan-500/5 blur-[60px] animate-float-slow" />
     </div>
   );
 };
